@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spell Check</title>
+</head>
+<body>
+
+    <form method=post action="">
+      <dl>
+        {{ form.textbox }}
+        <div id=result>{{error}}
+            <input type="hidden"/>
+        </dl>
+        <p><input type=submit name='submit_button' value='Check Spelling'>
+    </form>
+
+</body>
+</html>
