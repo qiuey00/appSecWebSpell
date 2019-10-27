@@ -1,0 +1,31 @@
+  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+
+
+<body>
+    <div align="left">
+        <form action="" method="post" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            {{form.uname.label}} {{form.uname}}
+            <br>
+            {{form.pword.label}} {{form.pword}}
+            <br>
+            {{form.2fa.label}} {{form.2fa}}
+            <br>
+            {{form.submit()}}
+        </form>
+    </div>
+    <div>
+         {% if reg_status %}
+        <p id="success">success</p>
+        {% else %}
+        <p id="success">failure</p>
+        {% endif %}
+    </div>
+</body>
+</html>
