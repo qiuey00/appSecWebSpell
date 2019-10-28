@@ -71,9 +71,8 @@ def login():
         fa2 = data.fa2.data
         if uname in loginInfo.keys() and pword in loginInfo[uname][0] and fa2 in loginInfo[uname][1]:
             session['logged_in'] = True
-            error='Successful Authentication'
-            return redirect(url_for('home'))
-
+            error='Success'
+            return render_template('login.html', form=form, error=error)
         if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
             error='Incorrect'
             return render_template('login.html', form=form, error=error)
@@ -83,7 +82,6 @@ def login():
         else:
             error='Incorrect'
             return render_template('login.html', form=form, error=error)
-
     else:
         error = 'Please fill out login'
         return render_template('login.html', form=form, error=error)
