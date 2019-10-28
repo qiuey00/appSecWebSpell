@@ -24,12 +24,13 @@ def test_spell_check(my_app):
     assert res.status_code == 200
     assert b"<title>Spell Check</title>" in res.data
 
-res = my_app.get("/register")
+def test_register(my_app):
+	res = my_app.get("/register")
     assert res.status_code == 200
     soup = BeautifulSoup(res.data, 'html.parser')
     csrf_token = soup.find('form').contents[1].attrs['value']
     res = my_app.post('/register',
-                      data=dict(userName='admin', password='administrator', auth2fa='12345678901',
+                      data=dict(userName='asdf', password='asdf', auth2fa='asdf',
                                 csrf_token=csrf_token),
                       follow_redirects=True)
     soup = BeautifulSoup(res.data, 'html.parser')
