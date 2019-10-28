@@ -3,7 +3,8 @@
 <a href="http://localhost:5000/login">Login</a> 
 <a href="http://localhost:5000/spell_check">SpellCheck</a>
 <form method=POST>
-<p><input type=submit name='submit_button' value='Log Out'></p>
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+<input type=submit name='submit_button' value='Log Out'></p>
 <br>
 {% if error %}
 {{error}}

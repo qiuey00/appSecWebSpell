@@ -10,7 +10,7 @@
       <dl>
         {{ form.textbox }}
         <div id=result>{{error}}
-            <input type="hidden"/>
+             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         </dl>
         <p><input type=submit name='submit_button' value='Check Spelling'>
     </form>

@@ -9,7 +9,7 @@
 <body>
     <div align="left">
         <form action="" method="post" novalidate>
-            <input type="hidden"/>
+             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             {{form.uname.label}} {{form.uname}}
             <br>
             {{form.pword.label}} {{form.pword}}
