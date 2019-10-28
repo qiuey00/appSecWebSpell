@@ -7,7 +7,7 @@ def my_app():
     return test_app.test_client()
 
 def test_register():
-	var = my_app()
+    var = my_app()
     res = var.get("/register")
     assert res.status_code == 200
     assert b"<title>Register</title>" in res.data
