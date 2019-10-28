@@ -70,7 +70,7 @@ def login():
         if uname in loginInfo.keys() and pword in loginInfo[uname][0] and fa2 in loginInfo[uname][1]:
             session['logged_in'] = True
             error="Successful Authentication"
-            return render_template('login.html', form=form,error=error)
+            return redirect(url_for('home'))
 
         if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
             error='Incorrect'
@@ -84,8 +84,8 @@ def login():
 
     else:
         #result='result'
-        error = "Logged In"
-        return render_template('home.html',error=error)
+        error = "Please fill out login"
+        return render_template('login.html',error=error)
 
 
 @app.route('/spell_check', methods=['POST', 'GET'])
