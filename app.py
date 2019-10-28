@@ -31,13 +31,15 @@ def index():
 
 @app.route('/home', methods=['POST','GET'])
 def home():
+    if session.get('logged_in') and request.method == 'GET':
+        error='Logged In'
+        
+        return render_template('home.html', error=error)
     if session.get('logged_in') and request.method =='POST' and request.form['submit_button'] =='Log Out':
         error='Logged Out'
         session.pop('logged_in', None)
         return render_template('home.html', error=error)
-    if session.get('logged_in'):
-        error='Logged In'
-        return render_template('home.html', error=error)
+    
     else:
         error='Not Logged In'
         return render_template('home.html', error=error)
