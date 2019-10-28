@@ -73,7 +73,7 @@ def login():
 
     else:
         #result='result'
-        error = session.get('logged_in')
+        error = "Logged In"
         return render_template('home.html',error=error)
 
 
