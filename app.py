@@ -97,7 +97,7 @@ def spell_check():
         testsub.terminate()
         for line in output.decode('utf-8').split('\n'):
             misspelled.append(line.strip())
-        return render_template('result.html', misspelled=misspelled)
+        return render_template('result.html', misspelled=misspelled, data=data)
         #except:
         #    return "errors"
         #return render_template('spell_check.html', form=form)
