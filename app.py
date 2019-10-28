@@ -7,8 +7,6 @@ import subprocess
 
 loginInfo = dict()
 
-
-
 class registerForm(Form):
     uname = StringField(label='User Name', id='uname', validators=[validators.required()])
     pword = PasswordField(label='Password', id='pword', validators=[validators.required()])
@@ -20,110 +18,121 @@ class spellForm(Form):
     submit = SubmitField('Submit')
 
 
+def create_app(config=None):
+    app = Flask(__name__)
+    # sess = Session()
+    csrf = CSRFProtect()
+    # if os.path.exists('./users_db.db'):
+    #     os.remove('./users_db.db')
+    # app.secret_key = 'super secret key'
+    # sess.init_app(app)
+    app.secret_key = 'secret'
+    csrf.init_app(app)
 
-app = Flask(__name__)
-app.secret_key = 'secret'
-csrf = CSRFProtect()
-csrf.init_app(app)
+# app = Flask(__name__)
+# app.secret_key = 'secret'
+# csrf = CSRFProtect()
+# csrf.init_app(app)
 
-@app.route('/')
-def index():
-    return redirect(url_for('home'))
+    @app.route('/')
+    def index():
+        return redirect(url_for('home'))
 
-@app.route('/home', methods=['POST','GET'])
-def home():
-    if session.get('logged_in') and request.method == 'GET':
-        error='Logged In' 
-        return render_template('home.html', error=error)
-    if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
-        error='Logged Out'
-        session.pop('logged_in', None)
-        return render_template('home.html', error=error)
-    
-    else:
-        error='Not Logged In'
-        return render_template('home.html', error=error)
-
-
-@app.route('/register', methods=['GET','POST'])
-def register():
-    form = registerForm()
-    data = registerForm(request.form)
-    if request.method == 'POST' and data.validate():
-        uname = data.uname.data
-        if uname in loginInfo.keys():
-            error = 'failure'
-            return render_template('register.html', form=form, error=error)
-
-        if uname not in loginInfo.keys():
-            loginInfo[uname] = [[data.pword.data],[data.fa2.data]]
-            error = 'success'
-            return render_template('register.html', form=form, error=error)
-    else:
-        error='Incomplete Form'
-        return render_template('register.html', form=form, error=error)
-
-@app.route('/login', methods=['POST','GET'])
-def login():
-    form = registerForm()
-    data = registerForm(request.form)
-
-    if request.method == 'POST' and data.validate() and not session.get('logged_in'): 
-        uname = data.uname.data
-        pword = data.pword.data
-        fa2 = data.fa2.data
-        if uname in loginInfo.keys() and pword in loginInfo[uname][0] and fa2 in loginInfo[uname][1]:
-            session['logged_in'] = True
-            error='Success'
-            return render_template('login.html', form=form, error=error)
-        if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
-            error='Incorrect'
-            return render_template('login.html', form=form, error=error)
-        if fa2 not in loginInfo[uname][1]:
-            error='Two-factor'
-            return render_template('login.html', form=form, error=error)  
+    @app.route('/home', methods=['POST','GET'])
+    def home():
+        if session.get('logged_in') and request.method == 'GET':
+            error='Logged In' 
+            return render_template('home.html', error=error)
+        if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
+            error='Logged Out'
+            session.pop('logged_in', None)
+            return render_template('home.html', error=error)
+        
         else:
-            error='Incorrect'
+            error='Not Logged In'
+            return render_template('home.html', error=error)
+
+
+    @app.route('/register', methods=['GET','POST'])
+    def register():
+        form = registerForm()
+        data = registerForm(request.form)
+        if request.method == 'POST' and data.validate():
+            uname = data.uname.data
+            if uname in loginInfo.keys():
+                error = 'failure'
+                return render_template('register.html', form=form, error=error)
+
+            if uname not in loginInfo.keys():
+                loginInfo[uname] = [[data.pword.data],[data.fa2.data]]
+                error = 'success'
+                return render_template('register.html', form=form, error=error)
+        else:
+            error='Incomplete Form'
+            return render_template('register.html', form=form, error=error)
+
+    @app.route('/login', methods=['POST','GET'])
+    def login():
+        form = registerForm()
+        data = registerForm(request.form)
+
+        if request.method == 'POST' and data.validate() and not session.get('logged_in'): 
+            uname = data.uname.data
+            pword = data.pword.data
+            fa2 = data.fa2.data
+            if uname in loginInfo.keys() and pword in loginInfo[uname][0] and fa2 in loginInfo[uname][1]:
+                session['logged_in'] = True
+                error='Success'
+                return render_template('login.html', form=form, error=error)
+            if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
+                error='Incorrect'
+                return render_template('login.html', form=form, error=error)
+            if fa2 not in loginInfo[uname][1]:
+                error='Two-factor'
+                return render_template('login.html', form=form, error=error)  
+            else:
+                error='Incorrect'
+                return render_template('login.html', form=form, error=error)
+        else:
+            error = 'Please fill out login'
             return render_template('login.html', form=form, error=error)
-    else:
-        error = 'Please fill out login'
-        return render_template('login.html', form=form, error=error)
 
 
-@app.route('/spell_check', methods=['POST', 'GET'])
-def spell_check():
-    form = spellForm()
-    data = spellForm(request.form)
-    misspelled = []
+    @app.route('/spell_check', methods=['POST', 'GET'])
+    def spell_check():
+        form = spellForm()
+        data = spellForm(request.form)
+        misspelled = []
 
-    if session.get('logged_in') and request.method == 'GET':
-        error = ''
-        return render_template('spell_check.html', form=form, error=error) 
+        if session.get('logged_in') and request.method == 'GET':
+            error = ''
+            return render_template('spell_check.html', form=form, error=error) 
 
-    if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check Spelling':
-        data = (data.textbox.data)
-        inputText = open('words.txt','w')
-        inputText.write(data)
-        inputText.close()
-        testsub = subprocess.Popen(['./a.out', 'words.txt', 'wordlist.txt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = testsub.stdout.read().strip()
-        testsub.terminate()
-        for line in output.decode('utf-8').split('\n'):
-            misspelled.append(line.strip())
-        return render_template('result.html', misspelled=misspelled, data=data)
+        if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check Spelling':
+            data = (data.textbox.data)
+            inputText = open('words.txt','w')
+            inputText.write(data)
+            inputText.close()
+            testsub = subprocess.Popen(['./a.out', 'words.txt', 'wordlist.txt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output = testsub.stdout.read().strip()
+            testsub.terminate()
+            for line in output.decode('utf-8').split('\n'):
+                misspelled.append(line.strip())
+            return render_template('result.html', misspelled=misspelled, data=data)
 
-    if not session.get('logged_in'):
-        error='Must Log In'
-        return render_template('spell_check.html', form=form,error=error)
+        if not session.get('logged_in'):
+            error='Must Log In'
+            return render_template('spell_check.html', form=form,error=error)
 
-    else:
-        error='spellCheck else statement'
-        return render_template('spell_check.html', form=form, error=error)
-
+        else:
+            error='spellCheck else statement'
+            return render_template('spell_check.html', form=form, error=error)
+    return app
 
 
 
 
 if __name__ == '__main__':
-    app.debug=True
+    # app.debug=True
+    app = create_app()
     app.run()

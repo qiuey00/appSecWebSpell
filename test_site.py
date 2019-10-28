@@ -1,21 +1,18 @@
-import requests, unittest
-from bs4 import BeautifulSoup
+import pytest
+import app
+import os
 
 
-WORDLIST = "wordlist.txt"
-SITE = "http://localhost:5000/login"
+@pytest.fixture
+def my_app():
+    test_app = app.create_app()
+    test_app.debug = True
+    return test_app.test_client()
 
-
-class TestWebFunctions(unittest.TestCase):
-
-	def testRootPage(self):
-		loginPage = requests.get(SITE)
-		assert(loginPage.status_code == 200)
-
-# def test_Login(my_app):
-#     res = my_app.get("/login")
-#     assert res.status_code == 200
-#     assert b"<title>Login</title>" in res.data
+def test_Login(my_app):
+    res = my_app.get("/login")
+    assert res.status_code == 200
+    assert b"<title>Login</title>" in res.data
 
 # def test_spell_check(my_app):
 #     res = my_app.get("/spell_check")
