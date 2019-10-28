@@ -63,7 +63,7 @@ def login():
     form = registerForm()
     data = registerForm(request.form)
 
-    if request.method == 'POST' and data.validate() and session.get('logged_in') == False: 
+    if request.method == 'POST' and data.validate() and not session.get('logged_in'): 
         uname = data.uname.data
         pword = data.pword.data
         fa2 = data.fa2.data
@@ -83,9 +83,8 @@ def login():
             return render_template('login.html', form=form, error=error)
 
     else:
-        #result='result'
         error = "Please fill out login"
-        return render_template('login.html',form=form, error=error)
+        return render_template('login.html', form=form, error=error)
 
 
 @app.route('/spell_check', methods=['POST', 'GET'])
