@@ -5,13 +5,10 @@
     <title>Spell Check</title>
 </head>
 <body>
-
     <form method=post action="">
-      <dl>
         {{ form.textbox }}
-        <div id=result>{{error}}
-             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        </dl>
+        <div id=result>{{error}}</div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <p><input type=submit name='submit_button' value='Check Spelling'>
     </form>
 
