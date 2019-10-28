@@ -25,7 +25,7 @@ def test_spell_check(my_app):
     assert b"<title>Spell Check</title>" in res.data
 
 def test_register(my_app):
-	res = my_app.get("/register")
+    res = my_app.get("/register")
     assert res.status_code == 200
     soup = BeautifulSoup(res.data, 'html.parser')
     csrf_token = soup.find('form').contents[1].attrs['value']
