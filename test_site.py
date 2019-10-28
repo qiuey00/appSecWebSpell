@@ -1,16 +1,16 @@
-import pytest
-import app
+import requests, unittest
+from bs4 import BeautifulSoup
 
-def my_app():
-    test_app = app.create_app()
-    test_app.debug = True
-    return test_app.test_client()
 
-def test_register():
-    var = my_app()
-    res = var.get("/register")
-    assert res.status_code == 200
-    assert b"<title>Register</title>" in res.data
+WORDLIST = "wordlist.txt"
+SITE = "http://localhost:5000/"
+
+
+class TestWebFunctions(unittest.TestCase):
+
+	def testRootPage(self):
+		loginPage = requests.get(SITE)
+		assert(loginPage.status_code == 200)
 
 # def test_Login(my_app):
 #     res = my_app.get("/login")
