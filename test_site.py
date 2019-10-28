@@ -31,7 +31,7 @@ def test_register(my_app):
     soup = BeautifulSoup(res.data, 'html.parser')
     csrf_token = soup.find('form').contents[1].attrs['value']
     res = my_app.post('/register',
-                      data=dict(userName='asdf', password='asdf', auth2fa='asdf',
+                      data=dict(uname='asdf', pword='asdf', fa2='asdf',
                                 csrf_token=csrf_token),
                       follow_redirects=True)
     soup = BeautifulSoup(res.data, 'html.parser')
