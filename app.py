@@ -74,18 +74,18 @@ def login():
 
         if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
             error='Incorrect'
-            return render_template('login.html', form=form,error=error)
+            return render_template('login.html', form=form, error=error)
         if fa2 not in loginInfo[uname][1]:
             error='Two-Factor'
-            return render_template('login.html', form=form,error=error)  
+            return render_template('login.html', form=form, error=error)  
         else:
             error='Incorrect'
-            return render_template('login.html', form=form,error=error)
+            return render_template('login.html', form=form, error=error)
 
     else:
         #result='result'
         error = "Please fill out login"
-        return render_template('login.html',error=error)
+        return render_template('login.html',form=form, error=error)
 
 
 @app.route('/spell_check', methods=['POST', 'GET'])
