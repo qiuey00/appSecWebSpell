@@ -28,12 +28,9 @@ def test_spell_check(my_app):
 def test_register(my_app):
     res = my_app.get("/register")
     assert res.status_code == 200
-    soup = BeautifulSoup(res.data, 'html.parser')
-    csrf_token = soup.find('form').contents[1].attrs['value']
-    res = my_app.post('/register',
-                      data=dict(uname='asdf', pword='asdf', fa2='asdf',
-                                csrf_token=csrf_token),
-                      follow_redirects=True)
-    soup = BeautifulSoup(res.data, 'html.parser')
-    response = soup.find(id='success')
+    data = BeautifulSoup(res.data, 'html.parser')
+    csrf_token = data.find('form').contents[1].attrs['value']
+    res = my_app.post('/register', data=dict(uname='asdf', pword='asdf', fa2='asdf', csrf_token=csrf_token))
+    data = BeautifulSoup(res.data, 'html.parser')
+    response = data.find(id='success')
     assert (str(response.contents[0]) == 'success')
