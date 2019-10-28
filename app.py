@@ -7,6 +7,18 @@ import subprocess
 
 loginInfo = dict()
 
+def create_app(config=None):
+    app = Flask(__name__)
+    sess = Session()
+    csrf = CSRFProtect()
+    app.config['SECRET_KEY'] = 'secret'
+    app.config['SESSION_TYPE'] = 'filesystem'
+    app.config['SESSION_COOKIE_NAME'] = 'cs-gy-9163-cookie'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users_db.db'
+    db = SQLAlchemy(app)
+    sess.init_app(app)
+    csrf.init_app(app)
+
 class registerForm(Form):
     uname = StringField(label='User Name', id='uname', validators=[validators.required()])
     pword = PasswordField(label='Password', id='pword', validators=[validators.required()])
@@ -16,6 +28,7 @@ class registerForm(Form):
 class spellForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired()], id='inputtext')
     submit = SubmitField('Submit')
+
 
 
 app = Flask(__name__)
