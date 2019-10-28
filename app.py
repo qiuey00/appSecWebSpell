@@ -55,7 +55,7 @@ def register():
         if uname not in loginInfo.keys():
             loginInfo[uname] = [[data.pword.data],[data.fa2.data]]
             error = 'success'
-            return render_template('register.html', error=error)
+            return render_template('register.html', form=form, error=error)
     else:
         error='Incomplete Form'
         return render_template('register.html', form=form, error=error)
