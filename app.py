@@ -27,8 +27,7 @@ app.secret_key = '12345678912345678932423412304981203487190351920384719028734912
 
 @app.route('/')
 def index():
-    form = registerForm()
-    return render_template('register.html', form=form)
+    return render_template('home.html')
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -42,8 +41,8 @@ def register():
 
         if uname not in loginInfo.keys():
             loginInfo[uname] = [[data.pword.data],[data.fa2.data]]
-            error = data.fa2.data
-            return render_template('register.html', form=form, error=error)
+            error = "registered"
+            return render_template('home.html', error=error)
     else:
         error='incomplete'
         return render_template('register.html', form=form, error=error)
@@ -53,7 +52,7 @@ def login():
     form = registerForm()
     data = registerForm(request.form)
 
-    if request.method == 'POST' and data.validate() and not session.get('logged_in'): 
+    if request.method == 'POST' and data.validate() and session.get('logged_in') == False: 
         uname = data.uname.data
         pword = data.pword.data
         fa2 = data.fa2.data
@@ -75,7 +74,8 @@ def login():
     else:
         #result='result'
         error = session.get('logged_in')
-        return render_template('login.html', form=form,error=error)
+        return render_template('home.html',error=error)
+
 
 @app.route('/spell_check', methods=['POST', 'GET'])
 def spell_check():
@@ -84,7 +84,7 @@ def spell_check():
     misspelled = []
 
     if session.get('logged_in') and request.method == 'GET':
-        error = 'inputtext'
+        error = 'Please Log In'
         return render_template('spell_check.html', form=form, error=error) 
 
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check Spelling':
@@ -102,14 +102,12 @@ def spell_check():
         #    return "errors"
         #return render_template('spell_check.html', form=form)
 
-    if not session.get('logged_in'):
-        #result='failure'
-        error='Login Before Accessing Spell Checker'
+    if session.get('logged_in') == False:
+        error='Must Log In'
         return render_template('spell_check.html', form=form,error=error)
 
     else:
         error='spellCheck else statement'
-        #result=''
         return render_template('spell_check.html', form=form, error=error)
 
 
