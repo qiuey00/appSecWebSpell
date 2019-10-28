@@ -27,7 +27,7 @@ app.secret_key = '12345678912345678932423412304981203487190351920384719028734912
 
 @app.route('/')
 def index():
-    return render_template('home.html', error=error)
+    return render_template('home.html')
     # return redirect(url_for('home'))
 
 @app.route('/home', methods=['POST','GET'])
@@ -35,7 +35,7 @@ def home():
     if session.get('logged_in') and request.method == 'GET':
         error='Logged In' 
         return render_template('home.html', error=error)
-    if session.get('logged_in') and request.method =='POST' and request.form['submit_button'] =='Log Out':
+    if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
         error='Logged Out'
         session.pop('logged_in', None)
         return render_template('home.html', error=error)

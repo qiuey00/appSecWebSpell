@@ -2,7 +2,8 @@
 <a href="http://localhost:5000/register">Register</a>
 <a href="http://localhost:5000/login">Login</a> 
 <a href="http://localhost:5000/spell_check">SpellCheck</a>
-<p><input type=submit name='submit_button' value='Log Out'>
+<form method=POST>
+<p><input type=submit name='submit_button' value='Log Out'></p>
 <br>
 {% if error %}
 {{error}}
