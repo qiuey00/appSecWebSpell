@@ -13,7 +13,7 @@ def my_app():
 def test_Register(my_app):
     res = my_app.get("/register")
     assert res.status_code == 200
-    assert "<title>Register</title>" in res.data
+    assert b"<title>Register</title>" in res.data
 
 def test_Login(my_app):
     res = my_app.get("/login")
