@@ -27,7 +27,7 @@ app.secret_key = '12345678912345678932423412304981203487190351920384719028734912
 
 @app.route('/')
 def index():
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
 
 @app.route('/home', methods=['POST','GET'])
 def home():
