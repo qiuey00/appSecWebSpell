@@ -12,7 +12,7 @@ def my_app():
 def test_Login(my_app):
     res = my_app.get("/login")
     assert res.status_code == 200
-    assert b"<title>Login</title>" in res.data
+    assert b"<title>Lodfgin</title>" in res.data
 
 # def test_spell_check(my_app):
 #     res = my_app.get("/spell_check")
