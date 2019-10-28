@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 
 WORDLIST = "wordlist.txt"
-SITE = "http://localhost:5000/"
+SITE = "http://localhost:5000/login"
 
 
 class TestWebFunctions(unittest.TestCase):
