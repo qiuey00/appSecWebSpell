@@ -1,5 +1,5 @@
 # from config import Config
-from flask import Flask, render_template, flash, request, session
+from flask import Flask, redirect, render_template, flash, request, session
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField, PasswordField
 import subprocess
 import os
