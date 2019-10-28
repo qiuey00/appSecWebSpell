@@ -25,7 +25,6 @@ csrf.init_app(app)
 
 @app.route('/')
 def index():
-    # return render_template('home.html')
     return redirect(url_for('home'))
 
 @app.route('/home', methods=['POST','GET'])
