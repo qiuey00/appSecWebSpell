@@ -1,6 +1,10 @@
 <!doctype html>
 <html>
    <body>
-      <textarea rows="5" cols="50" id="misspelled">{{misspelled}}</textarea>
+      <div id="misspelled">{{misspelled}}</div>
+      <br>
+      {% for word in misspelled %}
+      {{ word }}
+      {% endfor %}
    </body>
 </html>
