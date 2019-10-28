@@ -28,6 +28,16 @@ app.secret_key = '12345678912345678932423412304981203487190351920384719028734912
 @app.route('/')
 def index():
     return render_template('home.html')
+@app.route('/home', methods=['POST','GET'])
+def home():
+    if session.get('logged_in') and request.method =='POST' and request.form['submit_button'] =='Log Out':
+        error='Logged Out'
+        session.pop('logged_in', None)
+        return render_template('home.html', error=error)
+    else:
+        error='Not Logged In'
+        return render_template('home.html', error=error)
+
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -36,15 +46,15 @@ def register():
     if request.method == 'POST' and data.validate():
         uname = data.uname.data
         if uname in loginInfo.keys():
-            error = 'already exists'
+            error = 'Already Exists'
             return render_template('register.html', form=form, error=error)
 
         if uname not in loginInfo.keys():
             loginInfo[uname] = [[data.pword.data],[data.fa2.data]]
-            error = "registered"
+            error = "Registered"
             return render_template('home.html', error=error)
     else:
-        error='incomplete'
+        error='Incomplete Form'
         return render_template('register.html', form=form, error=error)
 
 @app.route('/login', methods=['POST','GET'])
@@ -84,7 +94,7 @@ def spell_check():
     misspelled = []
 
     if session.get('logged_in') and request.method == 'GET':
-        error = 'Please Log In'
+        error = ''
         return render_template('spell_check.html', form=form, error=error) 
 
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check Spelling':
@@ -102,7 +112,7 @@ def spell_check():
         #    return "errors"
         #return render_template('spell_check.html', form=form)
 
-    if session.get('logged_in') == False:
+    if not session.get('logged_in'):
         error='Must Log In'
         return render_template('spell_check.html', form=form,error=error)
 
