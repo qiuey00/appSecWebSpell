@@ -1,6 +1,11 @@
 import pytest
 import app
 
+def my_app():
+    test_app = app.create_app()
+    test_app.debug = True
+    return test_app.test_client()
+
 def test_register(my_app):
     res = my_app.get("/register")
     assert res.status_code == 200
