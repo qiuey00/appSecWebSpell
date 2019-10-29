@@ -29,7 +29,7 @@ def test_register_working(my_app):
     assert res.status_code == 200
     data = BeautifulSoup(res.data, 'html.parser')
     csrf_token = data.find('form').contents[1].attrs['value']
-    res = my_app.post('/register', data=dict(uname='asdf', pword='asdf', fa2='asdf', csrf_token=csrf_token))
+    res = my_app.post('/register', data=dict(uname='asdf', pword='asdf', fa2='1234567890', csrf_token=csrf_token))
     data = BeautifulSoup(res.data, 'html.parser')
     response = data.find(id='success')
     assert (str(response.contents[0]) == 'success')
