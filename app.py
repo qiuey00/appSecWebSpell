@@ -8,7 +8,7 @@ loginInfo = dict()
 class registerForm(Form):
     uname = StringField(label='User Name', id='uname', validators=[validators.DataRequired()])
     pword = PasswordField(label='Password', id='pword', validators=[validators.DataRequired()])
-    fa2 = StringField(label='2 Factor Number', id='2fa', validators=[validators.DataRequired(), validators.Length(min=10,max=10)])
+    fa2 = StringField(label='2 Factor Number', id='2fa', validators=[validators.DataRequired(), validators.Length(min=10,max=11)])
     submit = SubmitField('Submit')
 
 class spellForm(Form):
