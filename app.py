@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, request, session
+from flask import Flask, redirect, url_for, render_template, request, session, make_response
 from wtforms import Form, TextAreaField, validators, StringField, SubmitField, PasswordField
 from flask_login import LoginManager, UserMixin, login_user, logout_user
 from flask_wtf import CSRFProtect
@@ -40,16 +40,22 @@ def create_app(config=None):
     def home():
         if session.get('logged_in') and request.method == 'GET':
             error='Logged In' 
-            return render_template('home.html', error=error)
+            response = make_response(render_template('home.html', error=error))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
         if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
             error='Logged Out'
             session.pop('logged_in', None)
             logout_user()
-            return render_template('home.html', error=error)
+            response = make_response(render_template('home.html', error=error))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
         
         else:
             error='Not Logged In'
-            return render_template('home.html', error=error)
+            response = make_response(render_template('home.html', error=error))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
 
     @app.route('/register', methods=['GET','POST'])
     def register():
@@ -59,15 +65,22 @@ def create_app(config=None):
             uname = data.uname.data
             if uname in loginInfo.keys():
                 error = 'failure'
-                return render_template('register.html', form=form, error=error)
+                response = make_response(render_template('register.html', form=form, error=error))
+                response.headers['Content-Security-Policy'] = "default-src 'self'"
+                return response
 
             if uname not in loginInfo.keys():
                 loginInfo[uname] = [[data.pword.data],[data.fa2.data]]
                 error = 'success'
-                return render_template('register.html', form=form, error=error)
+                # return render_template('register.html', form=form, error=error)
+                response = make_response(render_template('register.html', form=form, error=error))
+                response.headers['Content-Security-Policy'] = "default-src 'self'"
+                return response
         else:
             error='Incomplete Form'
-            return render_template('register.html', form=form, error=error)
+            response = make_response(render_template('register.html', form=form, error=error))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
 
     @app.route('/login', methods=['POST','GET'])
     def login():
@@ -82,19 +95,29 @@ def create_app(config=None):
                 session['logged_in'] = True
                 login_user(load_user(uname))
                 error='Success'
-                return render_template('login.html', form=form, error=error)
+                response = make_response(render_template('login.html', form=form, error=error))
+                response.headers['Content-Security-Policy'] = "default-src 'self'"
+                return response
             if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
                 error='Incorrect'
-                return render_template('login.html', form=form, error=error)
+                response = make_response(render_template('login.html', form=form, error=error))
+                response.headers['Content-Security-Policy'] = "default-src 'self'"
+                return response
             if fa2 not in loginInfo[uname][1]:
                 error='Two-factor'
-                return render_template('login.html', form=form, error=error)  
+                response = make_response(render_template('login.html', form=form, error=error))
+                response.headers['Content-Security-Policy'] = "default-src 'self'"
+                return response
             else:
                 error='Incorrect'
-                return render_template('login.html', form=form, error=error)
+                response = make_response(render_template('login.html', form=form, error=error))
+                response.headers['Content-Security-Policy'] = "default-src 'self'"
+                return response
         else:
             error = 'Please fill out login'
-            return render_template('login.html', form=form, error=error)
+            response = make_response(render_template('login.html', form=form, error=error))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
 
 
     @app.route('/spell_check', methods=['POST', 'GET'])
@@ -105,7 +128,9 @@ def create_app(config=None):
 
         if session.get('logged_in') and request.method == 'GET':
             error = ''
-            return render_template('spell_check.html', form=form, error=error) 
+            response = make_response(render_template('spell_check.html', form=form, error=error))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
 
         if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check Spelling':
             data = (data.textbox.data)
@@ -117,15 +142,21 @@ def create_app(config=None):
             testsub.terminate()
             for line in output.decode('utf-8').split('\n'):
                 misspelled.append(line.strip())
-            return render_template('result.html', misspelled=misspelled, data=data)
+            response = make_response(render_template('result.html', misspelled=misspelled, data=data))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
 
         if not session.get('logged_in'):
             error='Must Log In'
-            return render_template('spell_check.html', form=form,error=error)
+            response = make_response(render_template('spell_check.html', form=form,error=error))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
 
         else:
             error='spellCheck else statement'
-            return render_template('spell_check.html', form=form, error=error)
+            response = make_response(render_template('spell_check.html', form=form, error=error))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
     return app
 
 if __name__ == '__main__':
