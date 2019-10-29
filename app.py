@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request, session
 from wtforms import Form, TextAreaField, validators, StringField, SubmitField, PasswordField
+from flask_login import LoginManager, UserMixin, login_user, logout_user
 from flask_wtf import CSRFProtect
 import subprocess
 
@@ -15,11 +16,21 @@ class spellForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired()], id='inputtext')
     submit = SubmitField('Submit')
 
+class User(UserMixin):
+    def __init__(self, username):
+        self.id = username
+
 def create_app(config=None):
     app = Flask(__name__)
-    csrf = CSRFProtect()
     app.secret_key = 'secret'
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    csrf = CSRFProtect()
     csrf.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(id):
+        return User(id)
 
     @app.route('/')
     def index():
@@ -33,6 +44,7 @@ def create_app(config=None):
         if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
             error='Logged Out'
             session.pop('logged_in', None)
+            logout_user()
             return render_template('home.html', error=error)
         
         else:
@@ -68,6 +80,7 @@ def create_app(config=None):
             fa2 = data.fa2.data
             if uname in loginInfo.keys() and pword in loginInfo[uname][0] and fa2 in loginInfo[uname][1]:
                 session['logged_in'] = True
+                login_user(load_user(uname))
                 error='Success'
                 return render_template('login.html', form=form, error=error)
             if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
