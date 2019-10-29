@@ -1,38 +1,25 @@
-# from config import Config
 from flask import Flask, redirect, url_for, render_template, request, session
-from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField, PasswordField
+from wtforms import Form, TextAreaField, validators, StringField, SubmitField, PasswordField
 from flask_wtf import CSRFProtect
 import subprocess
-
 
 loginInfo = dict()
 
 class registerForm(Form):
-    uname = StringField(label='User Name', id='uname', validators=[validators.required()])
-    pword = PasswordField(label='Password', id='pword', validators=[validators.required()])
-    fa2 = StringField(label='2 Factor', id='2fa')
+    uname = StringField(label='User Name', id='uname', validators=[validators.DataRequired()])
+    pword = PasswordField(label='Password', id='pword', validators=[validators.DataRequired()])
+    fa2 = StringField(label='2 Factor Number', id='2fa', validators=[validators.DataRequired(), validators.Length(min=10,max=10)])
     submit = SubmitField('Submit')
 
 class spellForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired()], id='inputtext')
     submit = SubmitField('Submit')
 
-
 def create_app(config=None):
     app = Flask(__name__)
-    # sess = Session()
     csrf = CSRFProtect()
-    # if os.path.exists('./users_db.db'):
-    #     os.remove('./users_db.db')
-    # app.secret_key = 'super secret key'
-    # sess.init_app(app)
     app.secret_key = 'secret'
     csrf.init_app(app)
-
-# app = Flask(__name__)
-# app.secret_key = 'secret'
-# csrf = CSRFProtect()
-# csrf.init_app(app)
 
     @app.route('/')
     def index():
@@ -51,7 +38,6 @@ def create_app(config=None):
         else:
             error='Not Logged In'
             return render_template('home.html', error=error)
-
 
     @app.route('/register', methods=['GET','POST'])
     def register():
@@ -129,10 +115,7 @@ def create_app(config=None):
             return render_template('spell_check.html', form=form, error=error)
     return app
 
-
-
-
 if __name__ == '__main__':
-    # app.debug=True
     app = create_app()
+    app.debug=True
     app.run()
