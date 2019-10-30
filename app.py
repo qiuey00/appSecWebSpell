@@ -14,7 +14,6 @@ class registerForm(Form):
 
 class spellForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired()], id='inputtext')
-    submit = SubmitField('Submit')
 
 class User(UserMixin):
     def __init__(self, username):
@@ -137,10 +136,10 @@ def create_app(config=None):
             inputText = open('words.txt','w')
             inputText.write(data)
             inputText.close()
-            testsub = subprocess.Popen(['./a.out', 'words.txt', 'wordlist.txt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            output = testsub.stdout.read().strip()
-            testsub.terminate()
-            for line in output.decode('utf-8').split('\n'):
+            spellCheck = subprocess.Popen(['./a.out', 'words.txt', 'wordlist.txt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            misspelledWords = spellCheck.stdout.read().strip()
+            spellCheck.terminate()
+            for line in misspelledWords.decode('utf-8').split('\n'):
                 misspelled.append(line.strip())
             response = make_response(render_template('result.html', misspelled=misspelled, data=data))
             response.headers['Content-Security-Policy'] = "default-src 'self'"
@@ -157,6 +156,7 @@ def create_app(config=None):
             response = make_response(render_template('spell_check.html', form=form, error=error))
             response.headers['Content-Security-Policy'] = "default-src 'self'"
             return response
+
     return app
 
 if __name__ == '__main__':
