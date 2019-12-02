@@ -320,7 +320,7 @@ def login_history():
                     logoutTime.append(entry.userLoggedOut)
             print("this is right after for loop")
 
-            print(queryResults[0].userAction)
+            print(logoutTime)
             return render_template('login_history_results.html', login=loginTime, logout=logoutTime)
         else:
 
