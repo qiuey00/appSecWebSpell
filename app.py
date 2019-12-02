@@ -104,7 +104,7 @@ def register():
         fa2 = data.fa2.data
         hashpword = bcrypt.generate_password_hash(pword).decode('utf-8')
         if userTable.query.filter_by(username=('%s' % uname)).first() == None:
-            userToAdd = userTable(username=uname, password=hashed_password,multiFactor=fa2,registered_on=datetime.now(),accessRole='user')
+            userToAdd = userTable(username=uname, password=hashpword,multiFactor=fa2,registered_on=datetime.now(),accessRole='user')
             db.session.add(userToAdd)
             db.session.commit()
             #print('User Successfully Registered')
