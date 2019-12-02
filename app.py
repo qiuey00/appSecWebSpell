@@ -306,7 +306,9 @@ def login_history():
     
         if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
             userToQuery = (form.textbox.data)
+            print("did the query fail")
             queryResults = userHistory.query.all()
+            print("no it did not fail")
             username = []
             # action = []
             loginTime = []
