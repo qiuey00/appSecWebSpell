@@ -71,7 +71,7 @@ class userSpellHistory(db.Model):
     # adminToAdd = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
     # db.session.add(adminToAdd)
     # db.session.commit()
-    
+
     # @login_manager.user_loader
     # def user_loader(user_id):
     #     return userTable.query.get(user_id)
@@ -111,24 +111,45 @@ class userSpellHistory(db.Model):
         data = registerForm(request.form)
         if request.method == 'POST' and data.validate():
             uname = data.uname.data
-            if uname in loginInfo.keys():
-                error = 'failure'
-                response = make_response(render_template('register.html', form=form, error=error))
-                response.headers['Content-Security-Policy'] = "default-src 'self'"
-                return response
+            pword = data.powrd.data
+            fa2 = data.fa2.data
+            hashpword = sha(pword).decode('utf-8')
 
-            if uname not in loginInfo.keys():
-                loginInfo[uname] = [[data.pword.data],[data.fa2.data]]
-                error = 'success'
-                # return render_template('register.html', form=form, error=error)
-                response = make_response(render_template('register.html', form=form, error=error))
-                response.headers['Content-Security-Policy'] = "default-src 'self'"
-                return response
+            if userTable.query.filter_by(username=('%s' % uname)).first() == None:
+                userToAdd = userTable(username=uname, password=hashed_password,multiFactor=fa2,registered_on=datetime.now(),accessRole='user')
+                db.session.add(userToAdd)
+                db.session.commit()
+                #print('User Successfully Registered')
+                error="success"
+                return render_template('register.html', form=registrationform, error=error)
+            else:
+                dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
+                if uname == dbUserCheck.username:
+                    print('User Already Exists')
+                    error='failure'
+                    return render_template('register.html', form=registrationform, error=error)
         else:
-            error='Incomplete Form'
-            response = make_response(render_template('register.html', form=form, error=error))
-            response.headers['Content-Security-Policy'] = "default-src 'self'"
-            return response
+            error=''
+            return render_template('register.html', form=registrationform, error=error)
+
+        #     if uname in loginInfo.keys():
+        #         error = 'failure'
+        #         response = make_response(render_template('register.html', form=form, error=error))
+        #         response.headers['Content-Security-Policy'] = "default-src 'self'"
+        #         return response
+
+        #     if uname not in loginInfo.keys():
+        #         loginInfo[uname] = [[data.pword.data],[data.fa2.data]]
+        #         error = 'success'
+        #         # return render_template('register.html', form=form, error=error)
+        #         response = make_response(render_template('register.html', form=form, error=error))
+        #         response.headers['Content-Security-Policy'] = "default-src 'self'"
+        #         return response
+        # else:
+        #     error='Incomplete Form'
+        #     response = make_response(render_template('register.html', form=form, error=error))
+        #     response.headers['Content-Security-Policy'] = "default-src 'self'"
+        #     return response
 
     @app.route('/login', methods=['POST','GET'])
     def login():
@@ -139,33 +160,67 @@ class userSpellHistory(db.Model):
             uname = data.uname.data
             pword = data.pword.data
             fa2 = data.fa2.data
-            if uname in loginInfo.keys() and pword in loginInfo[uname][0] and fa2 in loginInfo[uname][1]:
+
+            if  userTable.query.filter_by(username=('%s' % uname)).first() == None:
+            error='Incorrect'
+            return render_template('login.html', form=loginform,error=error)
+        else :
+            dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
+            if uname == dbUserCheck.username and sha.check_password_hash(dbUserCheck.password,pword) and fa2 == dbUserCheck.multiFactor:
+                # assign user session
                 session['logged_in'] = True
-                login_user(load_user(uname))
-                error='Success'
-                response = make_response(render_template('login.html', form=form, error=error))
-                response.headers['Content-Security-Policy'] = "default-src 'self'"
-                return response
-            if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
+                login_user(dbUserCheck)
+
+                # establish login for user and add to userhistory table
+                userLoginToAdd = userHistory(userAction='LoggedIn', username=uname,userLoggedIn=datetime.now())
+                db.session.add(userLoginToAdd)
+                db.session.commit()
+
+                error="Successful Authentication"   
+                return render_template('login.html', form=loginform,error=error)
+
+            if pword != dbUserCheck.password:
                 error='Incorrect'
-                response = make_response(render_template('login.html', form=form, error=error))
-                response.headers['Content-Security-Policy'] = "default-src 'self'"
-                return response
-            if fa2 not in loginInfo[uname][1]:
-                error='Two-factor'
-                response = make_response(render_template('login.html', form=form, error=error))
-                response.headers['Content-Security-Policy'] = "default-src 'self'"
-                return response
-            else:
-                error='Incorrect'
-                response = make_response(render_template('login.html', form=form, error=error))
-                response.headers['Content-Security-Policy'] = "default-src 'self'"
-                return response
+                return render_template('login.html', form=loginform,error=error)
+            if fa2 != dbUserCheck.multiFactor:
+                error='Two-Factor'
+                return render_template('login.html', form=loginform,error=error) 
+        if request.method == 'POST' and loginform.validate() and session.get('logged_in'): 
+            error='Already Logged In...Please Log Out'
+            return render_template('login.html', form=loginform,error=error)  
+
         else:
-            error = 'Please fill out login'
-            response = make_response(render_template('login.html', form=form, error=error))
-            response.headers['Content-Security-Policy'] = "default-src 'self'"
-            return response
+            error=''
+            return render_template('login.html', form=loginform,error=error) 
+
+
+        #     if uname in loginInfo.keys() and pword in loginInfo[uname][0] and fa2 in loginInfo[uname][1]:
+        #         session['logged_in'] = True
+        #         login_user(load_user(uname))
+        #         error='Success'
+        #         response = make_response(render_template('login.html', form=form, error=error))
+        #         response.headers['Content-Security-Policy'] = "default-src 'self'"
+        #         return response
+        #     if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
+        #         error='Incorrect'
+        #         response = make_response(render_template('login.html', form=form, error=error))
+        #         response.headers['Content-Security-Policy'] = "default-src 'self'"
+        #         return response
+        #     if fa2 not in loginInfo[uname][1]:
+        #         error='Two-factor'
+        #         response = make_response(render_template('login.html', form=form, error=error))
+        #         response.headers['Content-Security-Policy'] = "default-src 'self'"
+        #         return response
+        #     else:
+        #         error='Incorrect'
+        #         response = make_response(render_template('login.html', form=form, error=error))
+        #         response.headers['Content-Security-Policy'] = "default-src 'self'"
+        #         return response
+        # else:
+        #     error = 'Please fill out login'
+        #     response = make_response(render_template('login.html', form=form, error=error))
+        #     response.headers['Content-Security-Policy'] = "default-src 'self'"
+        #     return response
 
 
     @app.route('/spell_check', methods=['POST', 'GET'])
@@ -188,6 +243,10 @@ class userSpellHistory(db.Model):
             spellCheck = subprocess.Popen(['./a.out', 'words.txt', 'wordlist.txt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             misspelledWords = spellCheck.stdout.read().strip()
             spellCheck.terminate()
+            userSpellHistoryToAdd = userSpellHistory(username=current_user.username,queryText=data,queryResults=output.decode('utf-8'))
+            db.session.add(userSpellHistoryToAdd)
+            db.session.commit()
+
             for line in misspelledWords.decode('utf-8').split('\n'):
                 misspelled.append(line.strip())
             response = make_response(render_template('result.html', misspelled=misspelled, data=data))
