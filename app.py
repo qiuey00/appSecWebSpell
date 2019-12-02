@@ -65,12 +65,12 @@ db.create_all()
 # adminToAdd = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
 # db.session.add(adminToAdd)
 # db.session.commit()
-# @login_manager.user_loader
-# def user_loader(user_id):
-#     return userTable.query.get(user_id)
 @login_manager.user_loader
-def load_user(id):
-    return User(id)
+def user_loader(user_id):
+    return userTable.query.get(user_id)
+# @login_manager.user_loader
+# def load_user(id):
+#     return User(id)
 @app.route('/')
 def index():
     return redirect(url_for('home'))
