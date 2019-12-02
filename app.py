@@ -314,7 +314,7 @@ def login_history():
             for entry in queryResults:
                 if entry.action == 'login':
                     loginTime.append(entry.userLoggedIn)
-                if entry.action = 'logout':                    
+                if entry.action == 'logout':                    
                     logoutTime.append(entry.userLoggedOut)
 
             print(queryResults[0].userAction)
