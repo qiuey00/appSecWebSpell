@@ -265,7 +265,7 @@ class userSpellHistory(db.Model):
             response.headers['Content-Security-Policy'] = "default-src 'self'"
             return response
 
-    return app
+        return app
 
 if __name__ == '__main__':
     app = create_app()
