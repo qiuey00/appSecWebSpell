@@ -3,7 +3,8 @@ from wtforms import Form, TextAreaField, validators, StringField, SubmitField, P
 from flask_login import LoginManager, UserMixin, login_user, logout_user
 from flask_wtf import CSRFProtect
 import subprocess
-from datetime import datetime
+from datetime import *
+from flask_user import roles_required,UserManager
 from hashlib import sha256 as SHA256
 from flask_sqlalchemy import SQLAlchemy
 
@@ -30,9 +31,9 @@ def create_app(config=None):
     csrf = CSRFProtect()
     csrf.init_app(app)
     sha = SHA256()
-    
+
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spell.db'
-    app.config['SESSION_COOKIE_NAME'] = 'spell-cookie'
+    # app.config['SESSION_COOKIE_NAME'] = 'spell-cookie'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db = SQLAlchemy(app)
 
