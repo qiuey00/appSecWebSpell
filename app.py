@@ -88,6 +88,7 @@ def home():
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
+        userLoginToAdd = userHistory(userAction='LoggedOut', username=uname,userLoggedOut=datetime.now())
         error='Logged Out'
         session.pop('logged_in', None)
         logout_user()
@@ -306,8 +307,18 @@ def login_history():
         if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
             userToQuery = (form.textbox.data)
             queryResults = userHistory.query.all()
+            username = []
+            # action = []
+            loginTime = []
+            logoutTime = []
+            for entry in queryResults:
+                if entry.action == 'login':
+                    loginTime.append(entry.userLoggedIn)
+                if entry.action = 'logout':                    
+                    logoutTime.append(entry.userLoggedOut)
+
             print(queryResults[0].userAction)
-            return render_template('login_history_results.html', misspelled=queryResults)
+            return render_template('login_history_results.html', login=loginTime, logout=logoutTime)
         else:
             error='Please Login As Admin'
             return render_template('home.html', form=form, error=error)

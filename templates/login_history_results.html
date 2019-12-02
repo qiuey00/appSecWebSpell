@@ -6,6 +6,9 @@
 <a href="http://localhost:5000/history">USER QUERY HISTORY</a>
 <a href="http://localhost:5000/login_history">USER LOGIN HISTORY</a>
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-{% for your_list_element in misspelled %}
-      <p>{{ your_list_element }} </p>
-  {% endfor %}
+
+{%for i in range(len(login)) %}
+  <li><div id="query{{i}}" href="/history/query{{query.queryID}}">Login #{{i}}</a></li>
+  <li><div id="login{{i}}_time" href="/history/query{{query.queryID}}">Login Time: {{login[i]}}</a></li>
+  <li><div id="logout{{i}}_time" href="/history/query{{query.queryID}}">Logout Time:  {{logout[i]}}</a></li>
+{%endfor %}
