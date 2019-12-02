@@ -21,7 +21,9 @@ class spellForm(Form):
 
 class wordForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired(message="Enter Words to Check"),validators.Length(max=20000)], id='inputtext')
-    
+
+class userCheckForm(Form):
+    textbox = TextAreaField('textbox', [validators.DataRequired(message="Enter User To Check Audit History"),validators.Length(max=20)], id='inputtext')    
 
 class User(UserMixin):
     def __init__(self, username):
