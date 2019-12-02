@@ -98,7 +98,7 @@ def register():
     data = registerForm(request.form)
     if request.method == 'POST' and data.validate():
         uname = data.uname.data
-        pword = data.powrd.data
+        pword = data.pword.data
         fa2 = data.fa2.data
         hashpword = sha(pword).decode('utf-8')
         if userTable.query.filter_by(username=('%s' % uname)).first() == None:
