@@ -5,7 +5,7 @@ from flask_wtf import CSRFProtect
 import subprocess
 from datetime import *
 # from hashlib import sha256
-from flask.bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
 loginInfo = dict()
