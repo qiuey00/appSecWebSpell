@@ -4,7 +4,6 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from flask_wtf import CSRFProtect
 import subprocess
 from datetime import *
-# from hashlib import sha256
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
@@ -37,9 +36,7 @@ login_manager.init_app(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 bcrypt = Bcrypt(app)
-# sha = SHA256()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spell.db'
-# app.config['SESSION_COOKIE_NAME'] = 'spell-cookie'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 class userTable(db.Model,UserMixin):
@@ -71,12 +68,11 @@ db.create_all()
 adminToAdd = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
 db.session.add(adminToAdd)
 db.session.commit()
+
 @login_manager.user_loader
 def user_loader(user_id):
     return userTable.query.get(user_id)
-# @login_manager.user_loader
-# def load_user(id):
-#     return User(id)
+
 @app.route('/')
 def index():
     return redirect(url_for('home'))
@@ -308,10 +304,9 @@ def login_history():
 
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
         userToQuery = (form.textbox.data)
-        queryResults = userHistory.query.all()
+        queryResults = userHistory.query.filter_by(queryID=('%s' % userToQuery)).all()
         print("queryworks")
         username = []
-        # action = []
         loginTime = []
         logoutTime = []
         print(queryResults)
