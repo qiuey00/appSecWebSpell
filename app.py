@@ -249,9 +249,9 @@ def history():
     if session.get('logged_in') and request.method =='POST':
         try:
             userQuery = form.textbox.data
-            print(userQuery)
+            # print(userQuery)
             dbUserCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
-            if dbUserCheck.accessRole=='admin':
+            if current_user.accessRole=='admin':
                 try:
                     numqueries = userSpellHistory.query.filter_by(username=('%s' % userQuery)).order_by(userSpellHistory.queryID.desc()).first()
                     allqueries =  userSpellHistory.query.filter_by(username=('%s' % userQuery)).all()
@@ -305,7 +305,7 @@ def login_history():
     
         if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
             userToQuery = (form.textbox.data)
-            queryResults = userHistory.query.filter_by(username=('%s' % userToQuery)).all()
+            queryResults = userHistory.query.all()
             return render_template('login_history_results.html', misspelled=queryResults)
         else:
             error='Please Login As Admin'
