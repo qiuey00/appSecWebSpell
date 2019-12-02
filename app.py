@@ -30,6 +30,7 @@ def create_app(config=None):
     csrf = CSRFProtect()
     csrf.init_app(app)
     sha = SHA256()
+    db = SQLAlchemy(app)
 
 class userTable(db.Model,UserMixin):
     user_id = db.Column(db.Integer(),unique=True,nullable=False,primary_key=True)
@@ -62,7 +63,6 @@ class userSpellHistory(db.Model):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spell.db'
     app.config['SESSION_COOKIE_NAME'] = 'spell-cookie'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    db = SQLAlchemy(app)
 
     db.drop_all()
     db.create_all()
