@@ -4,7 +4,6 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user
 from flask_wtf import CSRFProtect
 import subprocess
 from datetime import *
-from flask_user import roles_required,UserManager
 from hashlib import sha256 as SHA256
 from flask_sqlalchemy import SQLAlchemy
 
