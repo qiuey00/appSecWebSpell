@@ -3,6 +3,10 @@ from wtforms import Form, TextAreaField, validators, StringField, SubmitField, P
 from flask_login import LoginManager, UserMixin, login_user, logout_user
 from flask_wtf import CSRFProtect
 import subprocess
+from flask_bcrypt import Bcrypt
+from datetime import datetime
+from hashlib import sha256 as SHA256
+from flask_sqlalchemy import SQLAlchemy
 
 loginInfo = dict()
 
@@ -26,6 +30,51 @@ def create_app(config=None):
     login_manager.init_app(app)
     csrf = CSRFProtect()
     csrf.init_app(app)
+    sha = SHA256()
+
+class userTable(db.Model,UserMixin):
+    user_id = db.Column(db.Integer(),unique=True,nullable=False,primary_key=True)
+    username = db.Column(db.String(20), unique=True,nullable=False)
+    password = db.Column(db.String(20),nullable=False)
+    multiFactor = db.Column(db.String(11),nullable=False)
+    registered_on = db.Column('registered_on', db.DateTime)
+    accessRole = db.Column(db.String(50))
+    def get_id(self):
+        return self.user_id
+    def get_active(self):
+        return True
+
+class userHistory(db.Model):
+    login_id = db.Column(db.Integer(),unique=True,nullable=False,primary_key=True,autoincrement=True)
+    user_id = db.Column(db.Integer(),db.ForeignKey("user_table.user_id"),unique=False)
+    username = db.Column(db.String(20), unique=False,nullable=False)
+    userAction = db.Column(db.String(20))
+    userLoggedIn = db.Column(db.DateTime)
+    userLoggedOut = db.Column(db.DateTime)
+
+
+class userSpellHistory(db.Model):
+    queryID= db.Column(db.Integer(),unique=True,nullable=False,primary_key=True,autoincrement=True)
+    username = db.Column(db.String(20), unique=False,nullable=False)
+    queryText = db.Column(db.String(1000), unique=False,nullable=False)
+    queryResults = db.Column(db.String(1000), unique=False,nullable=False)
+
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spell.db'
+    app.config['SESSION_COOKIE_NAME'] = 'spell-cookie'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db = SQLAlchemy(app)
+
+    db.drop_all()
+    db.create_all()
+
+    # adminToAdd = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
+    # db.session.add(adminToAdd)
+    # db.session.commit()
+    
+    # @login_manager.user_loader
+    # def user_loader(user_id):
+    #     return userTable.query.get(user_id)
 
     @login_manager.user_loader
     def load_user(id):
