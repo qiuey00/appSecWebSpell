@@ -89,6 +89,8 @@ def home():
         return response
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
         userLoginToAdd = userHistory(userAction='LoggedOut', username=current_user.username,userLoggedOut=datetime.now())
+        db.session.add(userLoginToAdd)
+        db.session.commit()
         error='Logged Out'
         session.pop('logged_in', None)
         logout_user()
@@ -297,39 +299,45 @@ def queryPage(query):
 @app.route('/login_history', methods=['GET','POST'])
 def login_history():
     form = userCheckForm(request.form)
-    try:
-        dbUserCheck = userTable.query.filter_by(username=('%s' % current_user.username)).first()
+    # try:
+    dbUserCheck = userTable.query.filter_by(username=('%s' % current_user.username)).first()
 
-        if session.get('logged_in') and request.method =='GET' and dbUserCheck.accessRole=='admin':
-            error = 'Authenticated User '
-            return render_template('login_history.html', form=form, error=error)
-    
-        if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
-            userToQuery = (form.textbox.data)
-            queryResults = userHistory.query.fetchall()
-            print("queryworks")
-            username = []
-            # action = []
-            loginTime = []
-            logoutTime = []
-            print("this is right before for loop")
-            print("length = " + len(queryResults))
-            for entry in queryResults:
-                print(entry.logoutTime)
-                if entry.userAction == 'login':
-                    loginTime.append(entry.userLoggedIn)
-                if entry.userAction == 'logout':                    
-                    logoutTime.append(entry.userLoggedOut)
-            print("this is right after for loop")
+    if session.get('logged_in') and request.method =='GET' and dbUserCheck.accessRole=='admin':
+        error = 'Authenticated User '
+        return render_template('login_history.html', form=form, error=error)
 
-            print(logoutTime)
-            return render_template('login_history_results.html', login=loginTime, logout=logoutTime)
-        else:
+    if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
+        userToQuery = (form.textbox.data)
+        queryResults = userHistory.query.all()
+        print("queryworks")
+        username = []
+        # action = []
+        loginTime = []
+        logoutTime = []
+        print(queryResults)
+        for entry in queryResults:
+            print("line 1")
+            print(entry.userAction)
+            if entry.userAction == 'LoggedIn':
+                print("in if 1")
+                loginTime.append(entry.userLoggedIn)
+            if entry.userAction == 'LoggedOut':                    
+                print("in if 2")
+                logoutTime.append(entry.userLoggedOut)
+        print("this is right after for loop")
 
-            error='Please Login As Admin'
-            return render_template('home.html', form=form, error=error)
-    except:
-        return render_template('home.html')
+        print("logout: ")
+        print(logoutTime)
+        print("login: ")
+        print(loginTime)
+
+        return render_template('login_history_results.html', login=loginTime, logout=logoutTime)
+    else:
+
+        error='Please Login As Admin'
+        return render_template('home.html', form=form, error=error)
+    # except:
+        # return render_template('home.html')
 
 if __name__ == '__main__':
     # app = Flask(__name__)
