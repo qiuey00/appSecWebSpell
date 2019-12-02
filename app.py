@@ -216,7 +216,7 @@ def spell_check():
         spellCheck = subprocess.Popen(['./a.out', 'words.txt', 'wordlist.txt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         misspelledWords = spellCheck.stdout.read().strip()
         spellCheck.terminate()
-        userSpellHistoryToAdd = userSpellHistory(username=current_user.username,queryText=data,queryResults=output.decode('utf-8'))
+        userSpellHistoryToAdd = userSpellHistory(username=current_user.username,queryText=data,queryResults=misspelledWords.decode('utf-8'))
         db.session.add(userSpellHistoryToAdd)
         db.session.commit()
         for line in misspelledWords.decode('utf-8').split('\n'):
