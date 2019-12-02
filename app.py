@@ -306,14 +306,14 @@ def login_history():
     
         if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
             userToQuery = (form.textbox.data)
-            queryResults = userHistory.query.all()
+            queryResults = userHistory.query.fetchall()
             print("queryworks")
             username = []
             # action = []
             loginTime = []
             logoutTime = []
             print("this is right before for loop")
-            print(queryResults[0].userLoggedIn)
+            print("length = " + len(queryResults))
             for entry in queryResults:
                 print(entry.logoutTime)
                 if entry.userAction == 'login':
