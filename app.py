@@ -313,7 +313,7 @@ def login_history():
             loginTime = []
             logoutTime = []
             print("this is right before for loop")
-            print(queryResults)
+            print(queryResults[0].userLoggedIn)
             for entry in queryResults:
                 print(entry.logoutTime)
                 if entry.userAction == 'login':
