@@ -88,7 +88,7 @@ def home():
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
-        userLoginToAdd = userHistory(userAction='LoggedOut', username=current_user.username,userLoggedOut=datetime.now())
+        # userLoginToAdd = userHistory(userAction='LoggedOut', username=current_user.username,userLoggedOut=datetime.now())
         error='Logged Out'
         session.pop('logged_in', None)
         logout_user()
