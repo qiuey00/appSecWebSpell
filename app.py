@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request, session, make_response
 from wtforms import Form, TextAreaField, validators, StringField, SubmitField, PasswordField
-from flask_login import LoginManager, UserMixin, login_user, logout_user
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 from flask_wtf import CSRFProtect
 import subprocess
 from datetime import *
