@@ -107,16 +107,16 @@ def register():
             db.session.commit()
             #print('User Successfully Registered')
             error="success"
-            return render_template('register.html', form=registrationform, error=error)
+            return render_template('register.html', form=registerForm, error=error)
         else:
             dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
             if uname == dbUserCheck.username:
                 print('User Already Exists')
                 error='failure'
-                return render_template('register.html', form=registrationform, error=error)
+                return render_template('register.html', form=registerForm, error=error)
     else:
         error=''
-        return render_template('register.html', form=registrationform, error=error)
+        return render_template('register.html', form=registerForm, error=error)
     #     if uname in loginInfo.keys():
     #         error = 'failure'
     #         response = make_response(render_template('register.html', form=form, error=error))
