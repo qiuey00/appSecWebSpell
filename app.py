@@ -36,7 +36,7 @@ def create_app(config=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db = SQLAlchemy(app)
 
-    class userTable(db.s,UserMixin):
+    class userTable(db.Model,UserMixin):
         user_id = db.Column(db.Integer(),unique=True,nullable=False,primary_key=True)
         username = db.Column(db.String(20), unique=True,nullable=False)
         password = db.Column(db.String(20),nullable=False)
