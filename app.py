@@ -4,7 +4,8 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user
 from flask_wtf import CSRFProtect
 import subprocess
 from datetime import *
-from hashlib import sha256 as SHA256
+# from hashlib import sha256
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
 loginInfo = dict()
@@ -29,7 +30,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
-sha = SHA256()
+bcrypt = Bcrypt(app)
+# sha = SHA256()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spell.db'
 # app.config['SESSION_COOKIE_NAME'] = 'spell-cookie'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -100,7 +102,7 @@ def register():
         uname = data.uname.data
         pword = data.pword.data
         fa2 = data.fa2.data
-        hashpword = sha(pword).decode('utf-8')
+        hashpword = bcrypt.generate_password_hash(pword).decode('utf-8')
         if userTable.query.filter_by(username=('%s' % uname)).first() == None:
             userToAdd = userTable(username=uname, password=hashed_password,multiFactor=fa2,registered_on=datetime.now(),accessRole='user')
             db.session.add(userToAdd)
@@ -147,7 +149,7 @@ def login():
             return render_template('login.html', form=loginform,error=error)
     else :
         dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
-        if uname == dbUserCheck.username and sha.check_password_hash(dbUserCheck.password,pword) and fa2 == dbUserCheck.multiFactor:
+        if uname == dbUserCheck.username and bcrypt.check_password_hash(dbUserCheck.password,pword) and fa2 == dbUserCheck.multiFactor:
             # assign user session
             session['logged_in'] = True
             login_user(dbUserCheck)
