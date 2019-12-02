@@ -277,6 +277,40 @@ def history():
     else:
         return render_template('home.html')
 
+@app.route("/history/<query>")
+def queryPage(query):
+    if request.method == 'GET':
+        try:
+            query = query.replace('query','')
+            history = userSpellHistory.query.filter_by(queryID=('%s' % query)).first()
+            queryID = history.queryID
+            username = history.username
+            submitText = history.queryText
+            returnedText = history.queryResults
+        except AttributeError:
+            return render_template('home.html')
+        return render_template('queryIDresults.html', queryID=queryID, username=username,submitText=submitText,results=returnedText)
+
+@app.route('/login_history', methods=['GET','POST'])
+def login_history():
+    form = userCheckForm(request.form)
+    try:
+        dbUserCheck = userTable.query.filter_by(username=('%s' % current_user.username)).first()
+
+        if session.get('logged_in') and request.method =='GET' and dbUserCheck.accessRole=='admin':
+            error = 'Authenticated User '
+            return render_template('login_history.html', form=form, error=error)
+    
+        if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
+            userToQuery = (form.textbox.data)
+            queryResults = userHistory.query.filter_by(username=('%s' % userToQuery)).all()
+            return render_template('login_history_results.html', misspelled=queryResults)
+        else:
+            error='Please Login As Admin'
+            return render_template('home.html', form=form, error=error)
+    except:
+        return render_template('home.html')
+
 if __name__ == '__main__':
     # app = Flask(__name__)
     # app = create_app()
