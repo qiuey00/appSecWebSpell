@@ -147,24 +147,24 @@ def login():
         if  userTable.query.filter_by(username=('%s' % uname)).first() == None:
             error='Incorrect'
             return render_template('login.html', form=loginform,error=error)
-    else :
-        dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
-        if uname == dbUserCheck.username and bcrypt.check_password_hash(dbUserCheck.password,pword) and fa2 == dbUserCheck.multiFactor:
-            # assign user session
-            session['logged_in'] = True
-            login_user(dbUserCheck)
-            # establish login for user and add to userhistory table
-            userLoginToAdd = userHistory(userAction='LoggedIn', username=uname,userLoggedIn=datetime.now())
-            db.session.add(userLoginToAdd)
-            db.session.commit()
-            error="Successful Authentication"   
-            return render_template('login.html', form=loginform,error=error)
-        if pword != dbUserCheck.password:
-            error='Incorrect'
-            return render_template('login.html', form=loginform,error=error)
-        if fa2 != dbUserCheck.multiFactor:
-            error='Two-Factor'
-            return render_template('login.html', form=loginform,error=error) 
+        else :
+            dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
+            if uname == dbUserCheck.username and bcrypt.check_password_hash(dbUserCheck.password,pword) and fa2 == dbUserCheck.multiFactor:
+                # assign user session
+                session['logged_in'] = True
+                login_user(dbUserCheck)
+                # establish login for user and add to userhistory table
+                userLoginToAdd = userHistory(userAction='LoggedIn', username=uname,userLoggedIn=datetime.now())
+                db.session.add(userLoginToAdd)
+                db.session.commit()
+                error="Successful Authentication"   
+                return render_template('login.html', form=loginform,error=error)
+            if pword != dbUserCheck.password:
+                error='Incorrect'
+                return render_template('login.html', form=loginform,error=error)
+            if fa2 != dbUserCheck.multiFactor:
+                error='Two-Factor'
+                return render_template('login.html', form=loginform,error=error) 
     if request.method == 'POST' and loginform.validate() and session.get('logged_in'): 
         error='Already Logged In...Please Log Out'
         return render_template('login.html', form=loginform,error=error)  
