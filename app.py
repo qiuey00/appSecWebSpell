@@ -306,22 +306,23 @@ def login_history():
     
         if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
             userToQuery = (form.textbox.data)
-            print("did the query fail")
             queryResults = userHistory.query.all()
+            print("queryworks")
             username = []
             # action = []
             loginTime = []
             logoutTime = []
+            print("this is right before for loop")
             for entry in queryResults:
                 if entry.action == 'login':
                     loginTime.append(entry.userLoggedIn)
                 if entry.action == 'logout':                    
                     logoutTime.append(entry.userLoggedOut)
+            print("this is right after for loop")
 
             print(queryResults[0].userAction)
             return render_template('login_history_results.html', login=loginTime, logout=logoutTime)
         else:
-            print("are we not admin")
 
             error='Please Login As Admin'
             return render_template('home.html', form=form, error=error)
