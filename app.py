@@ -36,32 +36,32 @@ def create_app(config=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db = SQLAlchemy(app)
 
-class userTable(db.Model,UserMixin):
-    user_id = db.Column(db.Integer(),unique=True,nullable=False,primary_key=True)
-    username = db.Column(db.String(20), unique=True,nullable=False)
-    password = db.Column(db.String(20),nullable=False)
-    multiFactor = db.Column(db.String(11),nullable=False)
-    registered_on = db.Column('registered_on', db.DateTime)
-    accessRole = db.Column(db.String(50))
-    def get_id(self):
-        return self.user_id
-    def get_active(self):
-        return True
+    class userTable(db.s,UserMixin):
+        user_id = db.Column(db.Integer(),unique=True,nullable=False,primary_key=True)
+        username = db.Column(db.String(20), unique=True,nullable=False)
+        password = db.Column(db.String(20),nullable=False)
+        multiFactor = db.Column(db.String(11),nullable=False)
+        registered_on = db.Column('registered_on', db.DateTime)
+        accessRole = db.Column(db.String(50))
+        def get_id(self):
+            return self.user_id
+        def get_active(self):
+            return True
 
-class userHistory(db.Model):
-    login_id = db.Column(db.Integer(),unique=True,nullable=False,primary_key=True,autoincrement=True)
-    user_id = db.Column(db.Integer(),db.ForeignKey("user_table.user_id"),unique=False)
-    username = db.Column(db.String(20), unique=False,nullable=False)
-    userAction = db.Column(db.String(20))
-    userLoggedIn = db.Column(db.DateTime)
-    userLoggedOut = db.Column(db.DateTime)
+    class userHistory(db.Model):
+        login_id = db.Column(db.Integer(),unique=True,nullable=False,primary_key=True,autoincrement=True)
+        user_id = db.Column(db.Integer(),db.ForeignKey("user_table.user_id"),unique=False)
+        username = db.Column(db.String(20), unique=False,nullable=False)
+        userAction = db.Column(db.String(20))
+        userLoggedIn = db.Column(db.DateTime)
+        userLoggedOut = db.Column(db.DateTime)
 
 
-class userSpellHistory(db.Model):
-    queryID= db.Column(db.Integer(),unique=True,nullable=False,primary_key=True,autoincrement=True)
-    username = db.Column(db.String(20), unique=False,nullable=False)
-    queryText = db.Column(db.String(1000), unique=False,nullable=False)
-    queryResults = db.Column(db.String(1000), unique=False,nullable=False)
+    class userSpellHistory(db.Model):
+        queryID= db.Column(db.Integer(),unique=True,nullable=False,primary_key=True,autoincrement=True)
+        username = db.Column(db.String(20), unique=False,nullable=False)
+        queryText = db.Column(db.String(1000), unique=False,nullable=False)
+        queryResults = db.Column(db.String(1000), unique=False,nullable=False)
 
 
     
