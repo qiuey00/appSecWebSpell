@@ -162,8 +162,8 @@ class userSpellHistory(db.Model):
             fa2 = data.fa2.data
 
             if  userTable.query.filter_by(username=('%s' % uname)).first() == None:
-            error='Incorrect'
-            return render_template('login.html', form=loginform,error=error)
+                error='Incorrect'
+                return render_template('login.html', form=loginform,error=error)
         else :
             dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
             if uname == dbUserCheck.username and sha.check_password_hash(dbUserCheck.password,pword) and fa2 == dbUserCheck.multiFactor:
