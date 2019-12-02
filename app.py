@@ -3,7 +3,6 @@ from wtforms import Form, TextAreaField, validators, StringField, SubmitField, P
 from flask_login import LoginManager, UserMixin, login_user, logout_user
 from flask_wtf import CSRFProtect
 import subprocess
-from flask_bcrypt import Bcrypt
 from datetime import datetime
 from hashlib import sha256 as SHA256
 from flask_sqlalchemy import SQLAlchemy
