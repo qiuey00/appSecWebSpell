@@ -19,6 +19,10 @@ class registerForm(Form):
 class spellForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired()], id='inputtext')
 
+class wordForm(Form):
+    textbox = TextAreaField('textbox', [validators.DataRequired(message="Enter Words to Check"),validators.Length(max=20000)], id='inputtext')
+    
+
 class User(UserMixin):
     def __init__(self, username):
         self.id = username
@@ -62,9 +66,9 @@ class userSpellHistory(db.Model):
 
 db.drop_all()
 db.create_all()
-# adminToAdd = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
-# db.session.add(adminToAdd)
-# db.session.commit()
+adminToAdd = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
+db.session.add(adminToAdd)
+db.session.commit()
 @login_manager.user_loader
 def user_loader(user_id):
     return userTable.query.get(user_id)
@@ -235,6 +239,43 @@ def spell_check():
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
     return app
+
+
+@app.route('/history', methods=['GET','POST'])
+def history():
+    form = wordForm(request.form)
+    if session.get('logged_in') and request.method =='POST':
+        try:
+            userQuery = form.textbox.data
+            print(userQuery)
+            dbUserCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
+            if dbUserCheck.accessRole=='admin':
+                try:
+                    numqueries = userSpellHistory.query.filter_by(username=('%s' % userQuery)).order_by(userSpellHistory.queryID.desc()).first()
+                    allqueries =  userSpellHistory.query.filter_by(username=('%s' % userQuery)).all()
+                    numqueriesCount = numqueries.queryID
+                except AttributeError:
+                    numqueries = ''
+                    numqueriesCount = 0
+                    allqueries = ''
+                return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
+        except AttributeError:
+            return render_template('home.html')
+
+
+    if session.get('logged_in') and request.method =='GET':
+        # Wrap try / except around this statement in case there are no results (NONE)
+        try:
+            numqueries = userSpellHistory.query.filter_by(username=('%s' % current_user.username)).order_by(userSpellHistory.queryID.desc()).first()
+            allqueries =  userSpellHistory.query.filter_by(username=('%s' % current_user.username)).all()
+            numqueriesCount = numqueries.queryID
+        except AttributeError:
+            numqueries = ''
+            numqueriesCount = 0
+            allqueries = ''
+        return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
+    else:
+        return render_template('home.html')
 
 if __name__ == '__main__':
     # app = Flask(__name__)
