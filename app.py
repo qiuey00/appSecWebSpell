@@ -142,8 +142,8 @@ def login():
             if uname == userCheck.username and bcrypt.check_password_hash(userCheck.password,pword) and fa2 == userCheck.multiFactor:
                 session['logged_in'] = True
                 login_user(userCheck)
-                userLoginToAdd = loginHistory(logStatus='LoggedIn', username=uname,loggedIn=datetime.now())
-                db.session.add(userLoginToAdd)
+                userLogin = loginHistory(logStatus='LoggedIn', username=uname,loggedIn=datetime.now())
+                db.session.add(userLogin)
                 db.session.commit()
                 error="Successful Authentication"   
                 return render_template('login.html', form=form,error=error)
