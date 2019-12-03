@@ -231,11 +231,11 @@ def queryPage(query):
             history = spellCheckHistory.query.filter_by(queryID=('%s' % query)).first()
             queryID = history.queryID
             username = history.username
-            submitText = history.queryText
-            returnedText = history.queryResults
+            submit = history.queryText
+            misspell = history.queryResults
         except AttributeError:
             return render_template('home.html')
-        return render_template('queryIDresults.html', queryID=queryID, username=username,submitText=submitText,results=returnedText)
+        return render_template('queryIDresults.html', queryID=queryID, username=username,submitText=submit,results=misspell)
 
 @app.route('/login_history', methods=['GET','POST'])
 def login_history():
