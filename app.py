@@ -118,8 +118,8 @@ def register():
             error="success"
             return render_template('register.html', form=form, error=error)
         else:
-            dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
-            if uname == dbUserCheck.username:
+            userCheck = userTable.query.filter_by(username=('%s' % uname)).first()
+            if uname == userCheck.username:
                 error='failure'
                 return render_template('register.html', form=form, error=error)
     else:
@@ -138,21 +138,21 @@ def login():
             error='Incorrect'
             return render_template('login.html', form=form,error=error)
         else :
-            dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
-            if uname == dbUserCheck.username and bcrypt.check_password_hash(dbUserCheck.password,pword) and fa2 == dbUserCheck.multiFactor:
+            userCheck = userTable.query.filter_by(username=('%s' % uname)).first()
+            if uname == userCheck.username and bcrypt.check_password_hash(userCheck.password,pword) and fa2 == userCheck.multiFactor:
                 # assign user session
                 session['logged_in'] = True
-                login_user(dbUserCheck)
+                login_user(userCheck)
                 # establish login for user and add to userhistory table
                 userLoginToAdd = loginHistory(logStatus='LoggedIn', username=uname,loggedIn=datetime.now())
                 db.session.add(userLoginToAdd)
                 db.session.commit()
                 error="Successful Authentication"   
                 return render_template('login.html', form=form,error=error)
-            if pword != dbUserCheck.password:
+            if pword != userCheck.password:
                 error='Incorrect'
                 return render_template('login.html', form=form,error=error)
-            if fa2 != dbUserCheck.multiFactor:
+            if fa2 != userCheck.multiFactor:
                 error='Two-Factor'
                 return render_template('login.html', form=form,error=error) 
     if request.method == 'POST' and form.validate() and session.get('logged_in'): 
@@ -207,7 +207,7 @@ def history():
     if session.get('logged_in') and request.method =='POST':
         try:
             userQuery = form.textbox.data
-            dbUserCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
+            userCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
             if current_user.accessRole=='admin':
                 try:
                     numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
@@ -252,9 +252,9 @@ def queryPage(query):
 @app.route('/login_history', methods=['GET','POST'])
 def login_history():
     form = userCheckForm(request.form)
-    dbUserCheck = userTable.query.filter_by(username=('%s' % current_user.username)).first()
+    userCheck = userTable.query.filter_by(username=('%s' % current_user.username)).first()
 
-    if session.get('logged_in') and request.method =='GET' and dbUserCheck.accessRole=='admin':
+    if session.get('logged_in') and request.method =='GET' and userCheck.accessRole=='admin':
         error = 'Authenticated User '
         return render_template('login_history.html', form=form, error=error)
 
