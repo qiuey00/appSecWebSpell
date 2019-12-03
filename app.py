@@ -112,13 +112,11 @@ def register():
             userToAdd = userTable(username=uname, password=hashpword,multiFactor=fa2,registered_on=datetime.now(),accessRole='user')
             db.session.add(userToAdd)
             db.session.commit()
-            #print('User Successfully Registered')
             error="success"
             return render_template('register.html', form=form, error=error)
         else:
             dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
             if uname == dbUserCheck.username:
-                print('User Already Exists')
                 error='failure'
                 return render_template('register.html', form=form, error=error)
     else:
@@ -264,10 +262,8 @@ def login_history():
         username = []
         loginTime = []
         logoutTime = []
-        print(queryResults)
 
         for entry in queryResults:
-            print(entry.logStatus)
             if entry.logStatus == 'LoggedIn':
                 loginTime.append(entry.loggedIn)
             if entry.logStatus == 'LoggedOut':                    
