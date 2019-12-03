@@ -190,7 +190,7 @@ def spell_check():
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
     else:
-        error='else'
+        error='spellCheck else statement'
         response = make_response(render_template('spell_check.html', form=form, error=error))
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
@@ -207,8 +207,8 @@ def history():
             if current_user.accessRole=='admin':
                 try:
                     numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
-                    numqueriesCount = numqueries.queryID
                     allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
+                    numqueriesCount = numqueries.queryID
                 except AttributeError:
                     numqueries = ''
                     numqueriesCount = 0
@@ -221,8 +221,8 @@ def history():
     if session.get('logged_in') and request.method =='GET':
         try:
             numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
-            numqueriesCount = numqueries.queryID
             allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
+            numqueriesCount = numqueries.queryID
         except AttributeError:
             numqueries = ''
             numqueriesCount = 0
@@ -239,11 +239,11 @@ def queryPage(query):
             history = spellCheckHistory.query.filter_by(queryID=('%s' % query)).first()
             queryID = history.queryID
             username = history.username
-            test = history.queryText
-            miss = history.queryResults
+            submitText = history.queryText
+            returnedText = history.queryResults
         except AttributeError:
             return render_template('home.html')
-        return render_template('queryIDresults.html', queryID=queryID, username=username,submitText=test,results=miss)
+        return render_template('queryIDresults.html', queryID=queryID, username=username,submitText=submitText,results=returnedText)
 
 @app.route('/login_history', methods=['GET','POST'])
 def login_history():
