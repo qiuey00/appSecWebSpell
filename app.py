@@ -205,28 +205,28 @@ def history():
             userQuery = form.textbox.data
             userCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
             if current_user.accessRole=='admin':
-                # try:
-                numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
-                numqueriesCount = numqueries.queryID
-                allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
-                # except AttributeError:
-                #     numqueries = ''
-                #     numqueriesCount = 0
-                #     allqueries = ''
+                try:
+                    numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
+                    numqueriesCount = numqueries.queryID
+                    allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
+                except AttributeError:
+                    numqueries = ''
+                    numqueriesCount = 0
+                    allqueries = ''
                 return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
         except AttributeError:
             return render_template('home.html')
 
 
     if session.get('logged_in') and request.method =='GET':
-        # try:
-        numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
-        numqueriesCount = numqueries.queryID
-        allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
-        # except AttributeError:
-        #     numqueries = ''
-        #     numqueriesCount = 0
-        #     allqueries = ''
+        try:
+            numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
+            numqueriesCount = numqueries.queryID
+            allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
+        except AttributeError:
+            numqueries = ''
+            numqueriesCount = 0
+            allqueries = ''
         return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
     else:
         return render_template('home.html')
@@ -239,11 +239,11 @@ def queryPage(query):
             history = spellCheckHistory.query.filter_by(queryID=('%s' % query)).first()
             queryID = history.queryID
             username = history.username
-            submitText = history.queryText
-            returnedText = history.queryResults
+            test = history.queryText
+            miss = history.queryResults
         except AttributeError:
             return render_template('home.html')
-        return render_template('queryIDresults.html', queryID=queryID, username=username,submitText=submitText,results=returnedText)
+        return render_template('queryIDresults.html', queryID=queryID, username=username,submitText=test,results=miss)
 
 @app.route('/login_history', methods=['GET','POST'])
 def login_history():
