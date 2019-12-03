@@ -211,8 +211,8 @@ def history():
             if current_user.accessRole=='admin':
                 try:
                     numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
-                    allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
                     numqueriesCount = numqueries.queryID
+                    allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
                 except AttributeError:
                     numqueries = ''
                     numqueriesCount = 0
@@ -225,8 +225,8 @@ def history():
     if session.get('logged_in') and request.method =='GET':
         try:
             numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
-            allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
             numqueriesCount = numqueries.queryID
+            allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
         except AttributeError:
             numqueries = ''
             numqueriesCount = 0
