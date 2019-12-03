@@ -76,6 +76,7 @@ def user_loader(user_id):
 @app.route('/')
 def index():
     return redirect(url_for('home'))
+
 @app.route('/home', methods=['POST','GET'])
 def home():
     if session.get('logged_in') and request.method == 'GET':
@@ -83,6 +84,7 @@ def home():
         response = make_response(render_template('home.html', error=error))
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
+
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
         userLoginToAdd = loginHistory(logStatus='LoggedOut', username=current_user.username,loggedOut=datetime.now())
         db.session.add(userLoginToAdd)
@@ -99,6 +101,7 @@ def home():
         response = make_response(render_template('home.html', error=error))
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
+
 @app.route('/register', methods=['GET','POST'])
 def register():
     form = registerForm()
@@ -107,9 +110,9 @@ def register():
         uname = data.uname.data
         pword = data.pword.data
         fa2 = data.fa2.data
-        hashpword = bcrypt.generate_password_hash(pword).decode('utf-8')
+        hashPass = bcrypt.generate_password_hash(pword).decode('utf-8')
         if userTable.query.filter_by(username=('%s' % uname)).first() == None:
-            userToAdd = userTable(username=uname, password=hashpword,multiFactor=fa2,registered_on=datetime.now(),accessRole='user')
+            userToAdd = userTable(username=uname, password=hashPass,multiFactor=fa2,registered_on=datetime.now(),accessRole='user')
             db.session.add(userToAdd)
             db.session.commit()
             error="success"
