@@ -140,10 +140,8 @@ def login():
         else :
             userCheck = userTable.query.filter_by(username=('%s' % uname)).first()
             if uname == userCheck.username and bcrypt.check_password_hash(userCheck.password,pword) and fa2 == userCheck.multiFactor:
-                # assign user session
                 session['logged_in'] = True
                 login_user(userCheck)
-                # establish login for user and add to userhistory table
                 userLoginToAdd = loginHistory(logStatus='LoggedIn', username=uname,loggedIn=datetime.now())
                 db.session.add(userLoginToAdd)
                 db.session.commit()
@@ -156,7 +154,7 @@ def login():
                 error='Two-Factor'
                 return render_template('login.html', form=form,error=error) 
     if request.method == 'POST' and form.validate() and session.get('logged_in'): 
-        error='Already Logged In...Please Log Out'
+        error='Already Logged In'
         return render_template('login.html', form=form,error=error)  
     else:
         error=''
@@ -209,28 +207,18 @@ def history():
             userQuery = form.textbox.data
             userCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
             if current_user.accessRole=='admin':
-                # try:
                 numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
                 numqueriesCount = numqueries.queryID
                 allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
-                # except AttributeError:
-                    # numqueries = ''
-                    # numqueriesCount = 0
-                    # allqueries = ''
                 return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
         except AttributeError:
             return render_template('home.html')
 
 
     if session.get('logged_in') and request.method =='GET':
-        # try:
         numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
         numqueriesCount = numqueries.queryID
         allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
-        # except AttributeError:
-            # numqueries = ''
-            # numqueriesCount = 0
-            # allqueries = ''
         return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
     else:
         return render_template('home.html')
