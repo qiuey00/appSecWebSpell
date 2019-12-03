@@ -22,7 +22,7 @@ class wordForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired(message="Enter Words to Check"),validators.Length(max=20000)], id='inputtext')
 
 class userCheckForm(Form):
-    textbox = TextAreaField('textbox', [validators.DataRequired(message="Enter User To Check Audit History"),validators.Length(max=20)], id='inputtext')    
+    textbox = TextAreaField('textbox', [validators.DataRequired(message="User to Check"),validators.Length(max=20)], id='inputtext')    
 
 class User(UserMixin):
     def __init__(self, username):
@@ -50,14 +50,14 @@ class userTable(db.Model,UserMixin):
         return self.user_id
     def get_active(self):
         return True
-class userHistory(db.Model):
+class loginHistory(db.Model):
     login_id = db.Column(db.Integer(),unique=True,nullable=False,primary_key=True,autoincrement=True)
     user_id = db.Column(db.Integer(),db.ForeignKey("user_table.user_id"),unique=False)
     username = db.Column(db.String(20), unique=False,nullable=False)
-    userAction = db.Column(db.String(20))
-    userLoggedIn = db.Column(db.DateTime)
-    userLoggedOut = db.Column(db.DateTime)
-class userSpellHistory(db.Model):
+    logStatus = db.Column(db.String(20))
+    loggedIn = db.Column(db.DateTime)
+    loggedOut = db.Column(db.DateTime)
+class spellCheckHistory(db.Model):
     queryID= db.Column(db.Integer(),unique=True,nullable=False,primary_key=True,autoincrement=True)
     username = db.Column(db.String(20), unique=False,nullable=False)
     queryText = db.Column(db.String(1000), unique=False,nullable=False)
@@ -84,7 +84,7 @@ def home():
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
-        userLoginToAdd = userHistory(userAction='LoggedOut', username=current_user.username,userLoggedOut=datetime.now())
+        userLoginToAdd = loginHistory(logStatus='LoggedOut', username=current_user.username,loggedOut=datetime.now())
         db.session.add(userLoginToAdd)
         db.session.commit()
         error='Logged Out'
@@ -159,7 +159,7 @@ def login():
                 session['logged_in'] = True
                 login_user(dbUserCheck)
                 # establish login for user and add to userhistory table
-                userLoginToAdd = userHistory(userAction='LoggedIn', username=uname,userLoggedIn=datetime.now())
+                userLoginToAdd = loginHistory(logStatus='LoggedIn', username=uname,loggedIn=datetime.now())
                 db.session.add(userLoginToAdd)
                 db.session.commit()
                 error="Successful Authentication"   
@@ -221,7 +221,7 @@ def spell_check():
         spellCheck = subprocess.Popen(['./a.out', 'words.txt', 'wordlist.txt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         misspelledWords = spellCheck.stdout.read().strip()
         spellCheck.terminate()
-        userSpellHistoryToAdd = userSpellHistory(username=current_user.username,queryText=data,queryResults=misspelledWords.decode('utf-8'))
+        userSpellHistoryToAdd = spellCheckHistory(username=current_user.username,queryText=data,queryResults=misspelledWords.decode('utf-8'))
         db.session.add(userSpellHistoryToAdd)
         db.session.commit()
         for line in misspelledWords.decode('utf-8').split('\n'):
@@ -248,12 +248,11 @@ def history():
     if session.get('logged_in') and request.method =='POST':
         try:
             userQuery = form.textbox.data
-            # print(userQuery)
             dbUserCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
             if current_user.accessRole=='admin':
                 try:
-                    numqueries = userSpellHistory.query.filter_by(username=('%s' % userQuery)).order_by(userSpellHistory.queryID.desc()).first()
-                    allqueries =  userSpellHistory.query.filter_by(username=('%s' % userQuery)).all()
+                    numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
+                    allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
                     numqueriesCount = numqueries.queryID
                 except AttributeError:
                     numqueries = ''
@@ -265,10 +264,9 @@ def history():
 
 
     if session.get('logged_in') and request.method =='GET':
-        # Wrap try / except around this statement in case there are no results (NONE)
         try:
-            numqueries = userSpellHistory.query.filter_by(username=('%s' % current_user.username)).order_by(userSpellHistory.queryID.desc()).first()
-            allqueries =  userSpellHistory.query.filter_by(username=('%s' % current_user.username)).all()
+            numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
+            allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
             numqueriesCount = numqueries.queryID
         except AttributeError:
             numqueries = ''
@@ -283,7 +281,7 @@ def queryPage(query):
     if request.method == 'GET':
         try:
             query = query.replace('query','')
-            history = userSpellHistory.query.filter_by(queryID=('%s' % query)).first()
+            history = spellCheckHistory.query.filter_by(queryID=('%s' % query)).first()
             queryID = history.queryID
             username = history.username
             submitText = history.queryText
@@ -295,7 +293,6 @@ def queryPage(query):
 @app.route('/login_history', methods=['GET','POST'])
 def login_history():
     form = userCheckForm(request.form)
-    # try:
     dbUserCheck = userTable.query.filter_by(username=('%s' % current_user.username)).first()
 
     if session.get('logged_in') and request.method =='GET' and dbUserCheck.accessRole=='admin':
@@ -304,35 +301,25 @@ def login_history():
 
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
         userToQuery = (form.textbox.data)
-        queryResults = userHistory.query.filter_by(queryID=('%s' % userToQuery)).all()
-        print("queryworks")
+        queryResults = loginHistory.query.filter_by(queryID=('%s' % userToQuery)).all()
+
         username = []
         loginTime = []
         logoutTime = []
         print(queryResults)
-        for entry in queryResults:
-            print("line 1")
-            print(entry.userAction)
-            if entry.userAction == 'LoggedIn':
-                print("in if 1")
-                loginTime.append(entry.userLoggedIn)
-            if entry.userAction == 'LoggedOut':                    
-                print("in if 2")
-                logoutTime.append(entry.userLoggedOut)
-        print("this is right after for loop")
 
-        print("logout: ")
-        print(logoutTime)
-        print("login: ")
-        print(loginTime)
+        for entry in queryResults:
+            print(entry.logStatus)
+            if entry.logStatus == 'LoggedIn':
+                loginTime.append(entry.loggedIn)
+            if entry.logStatus == 'LoggedOut':                    
+                logoutTime.append(entry.loggedOut)
 
         return render_template('login_history_results.html', login=loginTime, logout=logoutTime)
     else:
 
         error='Please Login As Admin'
         return render_template('home.html', form=form, error=error)
-    # except:
-        # return render_template('home.html')
 
 if __name__ == '__main__':
     # app = Flask(__name__)
