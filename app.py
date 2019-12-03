@@ -144,7 +144,7 @@ def login():
             if uname == dbUserCheck.username and bcrypt.check_password_hash(dbUserCheck.password,pword) and fa2 == dbUserCheck.multiFactor:
                 session['logged_in'] = True
                 login_user(dbUserCheck)
-                userLoginToAdd = loginHistory(logStatus='LoggedIn', username=uname,loggedIn=datetime.now())
+                userLoginToAdd = loginHistory(logStatus='LoggedIn', username=username,loggedIn=datetime.now())
                 db.session.add(userLoginToAdd)
                 db.session.commit()
                 error="Success"   
