@@ -219,14 +219,14 @@ def history():
 
 
     if session.get('logged_in') and request.method =='GET':
-        try:
-            numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
-            numqueriesCount = numqueries.queryID
-            allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
-        except AttributeError:
-            numqueries = ''
-            numqueriesCount = 0
-            allqueries = ''
+        # try:
+        numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
+        numqueriesCount = numqueries.queryID
+        allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
+        # except AttributeError:
+        #     numqueries = ''
+        #     numqueriesCount = 0
+        #     allqueries = ''
         return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
     else:
         return render_template('home.html')
