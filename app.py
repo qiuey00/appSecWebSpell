@@ -133,9 +133,9 @@ def login():
     form = registerForm()
     data = registerForm(request.form)
     if request.method == 'POST' and data.validate() and not session.get('logged_in'): 
-        uname = data.uname.data
-        pword = data.pword.data
-        fa2 = data.fa2.data
+        uname = (data.uname.data)
+        pword = (data.pword.data)
+        fa2 = (data.fa2.data)
         if  userTable.query.filter_by(username=('%s' % uname)).first() == None:
             error='Incorrect'
             return render_template('login.html', form=form,error=error)
@@ -147,13 +147,13 @@ def login():
                 userLoginToAdd = loginHistory(logStatus='LoggedIn', username=username,loggedIn=datetime.now())
                 db.session.add(userLoginToAdd)
                 db.session.commit()
-                error="Success"   
+                error="Successful Authentication"   
                 return render_template('login.html', form=form,error=error)
             if pword != dbUserCheck.password:
                 error='Incorrect'
                 return render_template('login.html', form=form,error=error)
             if fa2 != dbUserCheck.multiFactor:
-                error='F2A'
+                error='Two-factor'
                 return render_template('login.html', form=form,error=error) 
     if request.method == 'POST' and form.validate() and session.get('logged_in'): 
         error='Already Logged In'
