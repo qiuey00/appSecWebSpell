@@ -65,8 +65,8 @@ class spellCheckHistory(db.Model):
 
 db.drop_all()
 db.create_all()
-adminToAdd = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
-db.session.add(adminToAdd)
+ADMIN = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
+db.session.add(ADMIN)
 db.session.commit()
 
 @login_manager.user_loader
