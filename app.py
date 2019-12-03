@@ -18,8 +18,8 @@ class registerForm(Form):
 class spellForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired()], id='inputtext')
 
-class wordForm(Form):
-    textbox = TextAreaField('textbox', [validators.DataRequired(message="Enter Words to Check"),validators.Length(max=20000)], id='inputtext')
+class workCheckForm(Form):
+    textbox = TextAreaField('textbox', [validators.DataRequired(message="User To Check"),validators.Length(max=20000)], id='inputtext')
 
 class userCheckForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired(message="User to Check"),validators.Length(max=20)], id='inputtext')    
@@ -65,8 +65,8 @@ class spellCheckHistory(db.Model):
 
 db.drop_all()
 db.create_all()
-adminToAdd = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
-db.session.add(adminToAdd)
+Admin = userTable(username='admin',password= bcrypt.generate_password_hash('Administrator@1').decode('utf-8'),multiFactor='12345678901',accessRole='admin')
+db.session.add(Admin)
 db.session.commit()
 
 @login_manager.user_loader
@@ -76,6 +76,7 @@ def user_loader(user_id):
 @app.route('/')
 def index():
     return redirect(url_for('home'))
+
 @app.route('/home', methods=['POST','GET'])
 def home():
     if session.get('logged_in') and request.method == 'GET':
@@ -83,6 +84,7 @@ def home():
         response = make_response(render_template('home.html', error=error))
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
+
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] =='Log Out':
         userLoginToAdd = loginHistory(logStatus='LoggedOut', username=current_user.username,loggedOut=datetime.now())
         db.session.add(userLoginToAdd)
@@ -99,6 +101,7 @@ def home():
         response = make_response(render_template('home.html', error=error))
         response.headers['Content-Security-Policy'] = "default-src 'self'"
         return response
+
 @app.route('/register', methods=['GET','POST'])
 def register():
     form = registerForm()
@@ -107,12 +110,12 @@ def register():
         uname = data.uname.data
         pword = data.pword.data
         fa2 = data.fa2.data
-        hashpword = bcrypt.generate_password_hash(pword).decode('utf-8')
+        hashPass = bcrypt.generate_password_hash(pword).decode('utf-8')
+
         if userTable.query.filter_by(username=('%s' % uname)).first() == None:
-            userToAdd = userTable(username=uname, password=hashpword,multiFactor=fa2,registered_on=datetime.now(),accessRole='user')
-            db.session.add(userToAdd)
+            User = userTable(username=uname, password=hashPass,multiFactor=fa2,registered_on=datetime.now(),accessRole='user')
+            db.session.add(User)
             db.session.commit()
-            #print('User Successfully Registered')
             error="success"
             return render_template('register.html', form=form, error=error)
         else:
@@ -124,23 +127,7 @@ def register():
     else:
         error=''
         return render_template('register.html', form=form, error=error)
-    #     if uname in loginInfo.keys():
-    #         error = 'failure'
-    #         response = make_response(render_template('register.html', form=form, error=error))
-    #         response.headers['Content-Security-Policy'] = "default-src 'self'"
-    #         return response
-    #     if uname not in loginInfo.keys():
-    #         loginInfo[uname] = [[data.pword.data],[data.fa2.data]]
-    #         error = 'success'
-    #         # return render_template('register.html', form=form, error=error)
-    #         response = make_response(render_template('register.html', form=form, error=error))
-    #         response.headers['Content-Security-Policy'] = "default-src 'self'"
-    #         return response
-    # else:
-    #     error='Incomplete Form'
-    #     response = make_response(render_template('register.html', form=form, error=error))
-    #     response.headers['Content-Security-Policy'] = "default-src 'self'"
-    #     return response
+
 @app.route('/login', methods=['POST','GET'])
 def login():
     form = registerForm()
@@ -155,54 +142,26 @@ def login():
         else :
             dbUserCheck = userTable.query.filter_by(username=('%s' % uname)).first()
             if uname == dbUserCheck.username and bcrypt.check_password_hash(dbUserCheck.password,pword) and fa2 == dbUserCheck.multiFactor:
-                # assign user session
                 session['logged_in'] = True
                 login_user(dbUserCheck)
-                # establish login for user and add to userhistory table
                 userLoginToAdd = loginHistory(logStatus='LoggedIn', username=uname,loggedIn=datetime.now())
                 db.session.add(userLoginToAdd)
                 db.session.commit()
-                error="Successful Authentication"   
+                error="Success"   
                 return render_template('login.html', form=form,error=error)
             if pword != dbUserCheck.password:
                 error='Incorrect'
                 return render_template('login.html', form=form,error=error)
             if fa2 != dbUserCheck.multiFactor:
-                error='Two-Factor'
+                error='F2A'
                 return render_template('login.html', form=form,error=error) 
     if request.method == 'POST' and form.validate() and session.get('logged_in'): 
-        error='Already Logged In...Please Log Out'
+        error='Already Logged In'
         return render_template('login.html', form=form,error=error)  
     else:
         error=''
         return render_template('login.html', form=form,error=error) 
-    #     if uname in loginInfo.keys() and pword in loginInfo[uname][0] and fa2 in loginInfo[uname][1]:
-    #         session['logged_in'] = True
-    #         login_user(load_user(uname))
-    #         error='Success'
-    #         response = make_response(render_template('login.html', form=form, error=error))
-    #         response.headers['Content-Security-Policy'] = "default-src 'self'"
-    #         return response
-    #     if uname not in loginInfo.keys() or pword not in loginInfo[uname][0]:
-    #         error='Incorrect'
-    #         response = make_response(render_template('login.html', form=form, error=error))
-    #         response.headers['Content-Security-Policy'] = "default-src 'self'"
-    #         return response
-    #     if fa2 not in loginInfo[uname][1]:
-    #         error='Two-factor'
-    #         response = make_response(render_template('login.html', form=form, error=error))
-    #         response.headers['Content-Security-Policy'] = "default-src 'self'"
-    #         return response
-    #     else:
-    #         error='Incorrect'
-    #         response = make_response(render_template('login.html', form=form, error=error))
-    #         response.headers['Content-Security-Policy'] = "default-src 'self'"
-    #         return response
-    # else:
-    #     error = 'Please fill out login'
-    #     response = make_response(render_template('login.html', form=form, error=error))
-    #     response.headers['Content-Security-Policy'] = "default-src 'self'"
-    #     return response
+
 @app.route('/spell_check', methods=['POST', 'GET'])
 def spell_check():
     form = spellForm()
@@ -221,8 +180,8 @@ def spell_check():
         spellCheck = subprocess.Popen(['./a.out', 'words.txt', 'wordlist.txt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         misspelledWords = spellCheck.stdout.read().strip()
         spellCheck.terminate()
-        userSpellHistoryToAdd = spellCheckHistory(username=current_user.username,queryText=data,queryResults=misspelledWords.decode('utf-8'))
-        db.session.add(userSpellHistoryToAdd)
+        spellHistory = spellCheckHistory(username=current_user.username,queryText=data,queryResults=misspelledWords.decode('utf-8'))
+        db.session.add(spellHistory)
         db.session.commit()
         for line in misspelledWords.decode('utf-8').split('\n'):
             misspelled.append(line.strip())
@@ -241,35 +200,24 @@ def spell_check():
         return response
     return app
 
-
 @app.route('/history', methods=['GET','POST'])
 def history():
-    form = wordForm(request.form)
+    form = workCheckForm(request.form)
     if session.get('logged_in') and request.method =='POST':
-        try:
-            userQuery = form.textbox.data
-            dbUserCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
-            if current_user.accessRole=='admin':
-                try:
-                    numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
-                    allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
-                    numqueriesCount = numqueries.queryID
-                except AttributeError:
-                    numqueries = ''
-                    numqueriesCount = 0
-                    allqueries = ''
-                return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
-        except AttributeError:
-            return render_template('home.html')
-
+        userQuery = form.textbox.data
+        dbUserCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
+        if current_user.accessRole=='admin':
+            numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
+            numqueriesCount = numqueries.queryID
+            allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
+            return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
 
     if session.get('logged_in') and request.method =='GET':
         try:
             numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
-            allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
             numqueriesCount = numqueries.queryID
+            allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
         except AttributeError:
-            numqueries = ''
             numqueriesCount = 0
             allqueries = ''
         return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
@@ -283,25 +231,25 @@ def queryPage(query):
             query = query.replace('query','')
             history = spellCheckHistory.query.filter_by(queryID=('%s' % query)).first()
             queryID = history.queryID
-            username = history.username
-            submitText = history.queryText
-            returnedText = history.queryResults
+            uname = history.username
+            text = history.queryText
+            misspelled = history.queryResults
         except AttributeError:
             return render_template('home.html')
-        return render_template('queryIDresults.html', queryID=queryID, username=username,submitText=submitText,results=returnedText)
+        return render_template('queryIDresults.html', queryID=queryID, uname=uname,text=text,misspelled=misspelled)
 
 @app.route('/login_history', methods=['GET','POST'])
 def login_history():
     form = userCheckForm(request.form)
-    dbUserCheck = userTable.query.filter_by(username=('%s' % current_user.username)).first()
+    user = userTable.query.filter_by(username=('%s' % current_user.username)).first()
 
-    if session.get('logged_in') and request.method =='GET' and dbUserCheck.accessRole=='admin':
+    if session.get('logged_in') and request.method =='GET' and user.accessRole=='admin':
         error = 'Authenticated User '
         return render_template('login_history.html', form=form, error=error)
 
     if session.get('logged_in') and request.method == 'POST' and request.form['submit_button'] == 'Check User Login History':
-        userToQuery = (form.textbox.data)
-        queryResults = loginHistory.query.filter_by(queryID=('%s' % userToQuery)).all()
+        search = (form.textbox.data)
+        queryResults = loginHistory.query.filter_by(queryID=('%s' % search)).all()
 
         username = []
         loginTime = []
@@ -315,11 +263,12 @@ def login_history():
             if entry.logStatus == 'LoggedOut':                    
                 logoutTime.append(entry.loggedOut)
 
+        if len(loginTime) > len(logoutTime):
+            logoutTime.append("N/A")
         return render_template('login_history_results.html', login=loginTime, logout=logoutTime)
     else:
-
-        error='Please Login As Admin'
-        return render_template('home.html', form=form, error=error)
+        error='Not Admin'
+        return render_template('home.html', error=error)
 
 if __name__ == '__main__':
     # app = Flask(__name__)

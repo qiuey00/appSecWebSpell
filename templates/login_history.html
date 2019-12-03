@@ -16,10 +16,11 @@
 <form method=post action="">
   <dl>
     {{ form.textbox }}
-    <div id=userid>{{error}}
+    <div id=userid>{{error}}</div>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
   </dl>
-  <p><input type=submit name='submit_button' value='Check User Login History'>
+  
+  <p><input type=submit name='submit_button' value='Check Login History'>
 </form>
 
 </body>
