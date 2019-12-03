@@ -208,18 +208,18 @@ def history():
             userCheck = userTable.query.filter_by(username=('%s' % userQuery)).first()
             if current_user.accessRole=='admin':
                 numqueries = spellCheckHistory.query.filter_by(username=('%s' % userQuery)).order_by(spellCheckHistory.queryID.desc()).first()
-                numqueriesCount = numqueries.queryID
+                num = numqueries.queryID
                 allqueries =  spellCheckHistory.query.filter_by(username=('%s' % userQuery)).all()
-                return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
+                return render_template('history.html', numqueries=num,allqueries=allqueries,form=form)
         except AttributeError:
             return render_template('home.html')
 
 
     if session.get('logged_in') and request.method =='GET':
         numqueries = spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).order_by(spellCheckHistory.queryID.desc()).first()
-        numqueriesCount = numqueries.queryID
+        num = numqueries.queryID
         allqueries =  spellCheckHistory.query.filter_by(username=('%s' % current_user.username)).all()
-        return render_template('history.html', numqueries=numqueriesCount,allqueries=allqueries,form=form)
+        return render_template('history.html', numqueries=num,allqueries=allqueries,form=form)
     else:
         return render_template('home.html')
 
