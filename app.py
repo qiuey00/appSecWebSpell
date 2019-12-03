@@ -19,7 +19,7 @@ class spellForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired()], id='inputtext')
 
 class wordForm(Form):
-    textbox = TextAreaField('textbox', [validators.DataRequired(message="Enter Words to Check"),validators.Length(max=20000)], id='inputtext')
+    textbox = TextAreaField('textbox', [validators.DataRequired(message="User to Check"),validators.Length(max=20000)], id='inputtext')
 
 class userCheckForm(Form):
     textbox = TextAreaField('textbox', [validators.DataRequired(message="User to Check"),validators.Length(max=20)], id='inputtext')    
