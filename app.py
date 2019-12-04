@@ -235,10 +235,10 @@ def create_app(config=None):
                 queryID = history.queryID
                 username = history.username
                 querytext = history.queryText
-                queryresults = history.queryResults
+                queryresult = history.queryResults
             except AttributeError:
                 return render_template('home.html')
-            return render_template('queryIDresults.html', queryID=queryID, username=username,querytext=submit,queryresults=queryresults)
+            return render_template('queryIDresults.html', queryID=queryID, username=username,querytext=submit,queryresults=queryresult)
 
     @app.route('/login_history', methods=['GET','POST'])
     def login_history():
