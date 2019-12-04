@@ -6,25 +6,26 @@
 </head>
 <body>
 
-    <div align="left">
-        <form action="" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            {{form.uname.label}} {{form.uname}}
-            <br>
-            {{form.pword.label}} {{form.pword}}
-            <br>
-            {{form.fa2.label}} {{form.fa2}}
-            <br>
-            {{form.submit()}}
-        </form>
-    </div>
-    <div>
-         {% if error %}
-        <p id="success">{{error}}</p>
-        {% else %}
-        <p id="success">failure</p>
-        {% endif %}
-    </div>
+<div align="left">
+    <form action="" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        {{form.uname.label}} {{form.uname}}
+        <br>
+        {{form.pword.label}} {{form.pword}}
+        <br>
+        {{form.fa2.label}} {{form.fa2}}
+        <br>
+        {{form.submit()}}
+    </form>
+</div>
+
+<div>
+     {% if error %}
+    <p id="success">{{error}}</p>
+    {% else %}
+    <p id="success">failure</p>
+    {% endif %}
+</div>
 
 </body>
 </html>
