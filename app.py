@@ -234,11 +234,11 @@ def create_app(config=None):
                 history = spellCheckHistory.query.filter_by(queryID=('%s' % query)).first()
                 queryID = history.queryID
                 username = history.username
-                submit = history.queryText
-                misspell = history.queryResults
+                querytext = history.queryText
+                queryresults = history.queryResults
             except AttributeError:
                 return render_template('home.html')
-            return render_template('queryIDresults.html', queryID=queryID, username=username,submitText=submit,results=misspell)
+            return render_template('queryIDresults.html', queryID=queryID, username=username,querytext=submit,queryresults=queryresults)
 
     @app.route('/login_history', methods=['GET','POST'])
     def login_history():

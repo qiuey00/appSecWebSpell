@@ -16,9 +16,9 @@
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
 {%for i in range(login|length) %}
-  <li><div id="login{{i}}">Login #{{i}}</div></li>
-  <li><div id="login{{i}}_time">Login time: #{{login[i]}}</div></li>
-  <li><div id="logout{{i}}_time">Logout time: #{{logout[i]}}</div></li>
+	<li><div id="login{{i}}">Login #{{i}}</div></li>
+	<li><div id="login{{i}}_time">Login time: #{{login[i]}}</div></li>
+	<li><div id="logout{{i}}_time">Logout time: #{{logout[i]}}</div></li>
 {%endfor %}
 
 </body>
