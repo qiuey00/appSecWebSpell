@@ -7,29 +7,29 @@ from datetime import *
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
+
+loginInfo = dict()
+
+class registerForm(Form):
+    uname = StringField(label='User Name', id='uname', validators=[validators.DataRequired()])
+    pword = PasswordField(label='Password', id='pword', validators=[validators.DataRequired()])
+    fa2 = StringField(label='2 Factor Number', id='2fa', validators=[validators.DataRequired(), validators.Length(min=10,max=11)])
+    submit = SubmitField('Submit')
+
+class spellForm(Form):
+    textbox = TextAreaField('textbox', [validators.DataRequired()], id='inputtext')
+
+class wordForm(Form):
+    textbox = TextAreaField('textbox', [validators.DataRequired(message="User to Check"),validators.Length(max=20000)], id='inputtext')
+
+class userCheckForm(Form):
+    textbox = TextAreaField('textbox', [validators.DataRequired(message="User to Check"),validators.Length(max=20)], id='inputtext')    
+
+class User(UserMixin):
+    def __init__(self, username):
+        self.id = username
+
 def create_app(config=None):
-
-    loginInfo = dict()
-
-    class registerForm(Form):
-        uname = StringField(label='User Name', id='uname', validators=[validators.DataRequired()])
-        pword = PasswordField(label='Password', id='pword', validators=[validators.DataRequired()])
-        fa2 = StringField(label='2 Factor Number', id='2fa', validators=[validators.DataRequired(), validators.Length(min=10,max=11)])
-        submit = SubmitField('Submit')
-
-    class spellForm(Form):
-        textbox = TextAreaField('textbox', [validators.DataRequired()], id='inputtext')
-
-    class wordForm(Form):
-        textbox = TextAreaField('textbox', [validators.DataRequired(message="User to Check"),validators.Length(max=20000)], id='inputtext')
-
-    class userCheckForm(Form):
-        textbox = TextAreaField('textbox', [validators.DataRequired(message="User to Check"),validators.Length(max=20)], id='inputtext')    
-
-    class User(UserMixin):
-        def __init__(self, username):
-            self.id = username
-
 
     app = Flask(__name__)
     app.secret_key = 'secret'
