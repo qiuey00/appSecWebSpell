@@ -7,7 +7,7 @@ from datetime import *
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
-def create_app():
+def create_app(config=None):
 
     loginInfo = dict()
 
