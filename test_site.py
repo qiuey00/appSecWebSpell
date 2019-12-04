@@ -11,6 +11,7 @@ def my_app():
 
 def test_Register(my_app):
     res = my_app.get("/register")
+    print("hello")
     assert res.status_code == 200
     assert b"<title>Register</title>" in res.data
 
