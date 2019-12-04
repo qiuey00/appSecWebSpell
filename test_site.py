@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 @pytest.fixture
 def my_app():
-    test_app = app.create_app()
+    test_app = create_app()
     return test_app.test_client()
 
 def test_Register(my_app):
