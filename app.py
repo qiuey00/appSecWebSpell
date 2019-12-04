@@ -269,6 +269,8 @@ def create_app(config=None):
             error='Please Login As Admin'
             return render_template('home.html', form=form, error=error)
 
+    return app
+
 if __name__ == '__main__':
     # app = Flask(__name__)
     app = create_app()
