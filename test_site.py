@@ -1,7 +1,8 @@
 import pytest
-import app
+# import app
 import os
 from bs4 import BeautifulSoup
+from app import app
 
 
 @pytest.fixture
