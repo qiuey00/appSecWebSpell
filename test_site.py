@@ -25,12 +25,12 @@ def test_Spell_Check(my_app):
     assert res.status_code == 200
     assert b"<title>Spell Check</title>" in res.data
 
-def test_Spell_Check(my_app):
+def test_History(my_app):
     res = my_app.get("/history")
     assert res.status_code == 200
     assert b"<title>History</title>" in res.data
 
-def test_Spell_Check(my_app):
+def test_Login_History(my_app):
     res = my_app.get("/login_history")
     assert res.status_code == 200
     assert b"<title>Login History</title>" in res.data
