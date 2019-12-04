@@ -1,6 +1,7 @@
 language: python
 python:
   - "3.6"
-install: pip install tox-travis
-sudo apt-get install sqlite3
+install: 
+  - pip install tox-travis
+  - sudo apt-get install sqlite3
 script: tox
