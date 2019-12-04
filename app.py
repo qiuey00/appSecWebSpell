@@ -30,7 +30,6 @@ class User(UserMixin):
         self.id = username
 
 def create_app(config=None):
-
     app = Flask(__name__)
     app.secret_key = 'secret'
     login_manager = LoginManager()
