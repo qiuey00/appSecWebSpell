@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    
+    <div align="left">
+        <form action="" method="post" novalidate>
+             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {{form.uname.label}} {{form.uname}}
+            <br>
+            {{form.pword.label}} {{form.pword}}
+            <br>
+            {{form.fa2.label}} {{form.fa2}}
+            <br>
+            {{form.submit()}}
+        </form>
+    </div>
+    <div>
+        <p id="result">{{error}}</p>
+    </div>
+
+</body>
+</html>

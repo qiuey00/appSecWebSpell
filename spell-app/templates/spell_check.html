@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spell Check</title>
+</head>
+<body>
+    
+<form method=post action="">
+{{ form.textbox }}
+<div id=result>{{error}}</div>
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+<p><input type=submit name='submit_button' value='Check Spelling'>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+
+<a href="http://localhost:5000/home">Home</a> 
+<a href="http://localhost:5000/register">Register</a>
+<a href="http://localhost:5000/login">Login</a> 
+<a href="http://localhost:5000/spell_check">SpellCheck</a>
+<a href="http://localhost:5000/history">Query History</a>
+<a href="http://localhost:5000/login_history">Login History</a>
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+{%for i in range(login|length) %}
+	<li><div id="login{{i}}">Login #{{i}}</div></li>
+	<li><div id="login{{i}}_time">Login time: #{{login[i]}}</div></li>
+	<li><div id="logout{{i}}_time">Logout time: #{{logout[i]}}</div></li>
+{%endfor %}
+
+</body>
+</html>
