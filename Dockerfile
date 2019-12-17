@@ -1,21 +1,18 @@
 FROM ubuntu:latest
 
 RUN apt-get update
-RUN apt-get install -y gcc libffi-dev python3-dev libc-dev gcc python3-pip 
+RUN apt-get install -y python3-dev gcc python3-pip 
 
-COPY ./requirements.txt /app/requirements.txt
+WORKDIR /spell-app
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-WORKDIR /spell-app
+COPY ./requirements.txt /app/requirements.txt
 
 COPY . /spell-app
 
 COPY templates /spell-app/templates
 
-EXPOSE 8080
-
 RUN  pip3 install -r /app/requirements.txt 
-RUN rm -rf /tmp 
 CMD ["flask", "run", "-h", "0.0.0.0", "-p", "8080" ]
